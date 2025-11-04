@@ -1,0 +1,286 @@
+@font-face {
+  font-family: 'Sloop ScriptOne';
+  src: url('fonts/Sloop ScriptOne Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond Italic';
+  src: url('fonts/CormorantGaramond-Italic-VariableFont_wght.ttf') format('truetype-variations');
+  /* Como es variable, definimos el rango de peso que soporta */
+  font-weight: 300 700; /* (Este es un rango común, ajústalo si lo conoces) */
+  font-style: italic;
+}
+
+/* === RESET === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* === VARIABLES MINIMALISTAS === */
+:root {
+  --primary: #222;   /* Color de acento oscuro */
+  --bg: #faf9f7;      /* Fondo crema muy sutil */
+  --text: #222;       /* Texto principal oscuro */
+  --text-light: #666; /* Texto secundario gris */
+  --border-light: #ebebeb; /* Separador muy suave */
+}
+
+/* === GLOBAL === */
+body {
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  width: 90%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* === HEADER === */
+.header {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+  /* Sin fondo, sin bordes. Se mezcla con la página. */
+}
+
+.logo-link {
+  display: inline-block; /* Asegura que el enlace se comporte bien */
+}
+
+.logo-link img {
+  display: block; /* Evita espacios extra debajo de la imagen */
+  max-width: 100%; /* Asegura que la imagen sea responsiva */
+  height: auto; /* Mantiene la proporción de la imagen */
+  
+  /* Ajusta este valor al tamaño que quieras para tu logo */
+  max-height: 100px; 
+}
+
+/* === HERO === */
+.hero {
+  text-align: center;
+  padding: 4rem 1rem;
+  /* Eliminamos imagen, gradiente y color de fondo */
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.hero h2 {
+  font-family: 'Sloop ScriptOne', cursive; /* <-- APLICA LA FUENTE */
+  font-weight: normal; /* Las fuentes script se ven mejor sin "negrita" falsa */
+  font-size: 5rem;     /* <-- AUMENTAMOS EL TAMAÑO para que luzca */
+  margin-bottom: 1rem;
+  line-height: 1.2;    /* Ajusta el espaciado si la fuente es muy alta */
+}
+
+.hero p {
+  font-size: 1.3rem;
+  color: var(--text-light);
+  font-family: 'Cormorant Garamond Italic', serif; /* <-- APLICA LA FUENTE */
+}
+
+/* === PRODUCTS === */
+.products {
+  padding: 4rem 0;
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond Italic', serif; /* <-- APLICA LA FUENTE */
+  text-align: center;
+  color: var(--text);
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 3rem;
+}
+
+.section-title::after {
+  display: none; /* Eliminamos la línea dorada decorativa */
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2.5rem 1.8rem; /* Más espacio vertical */
+}
+
+.product-card {
+  /* Eliminamos fondo, borde, radio y sombra */
+  text-align: center; /* Centramos todo para un look limpio */
+}
+
+.product-card:hover {
+  transform: none; /* Sin efectos de hover */
+}
+
+.product-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px; /* Redondeamos solo la imagen */
+}
+
+.product-info {
+  padding: 1rem 0;
+}
+
+.product-name {
+  font-family: 'Cormorant Garamond Italic', serif; /* <-- APLICA LA FUENTE */
+  font-weight: 800;  /* 400 es 'normal'. Puedes probar 300 para un look más fino */
+  color: var(--text);
+  font-size: 1.5rem; /* <-- AUMENTAMOS TAMAÑO para legibilidad */
+  margin-bottom: 0.3
+}
+
+.product-description {
+  font-family: 'Cormorant Garamond Italic', serif; /* <-- APLICA LA FUENTE */
+  font-style: italic; /* Aseguramos que se pida el estilo itálico */
+  font-weight: 400;  /* 400 es 'normal'. Puedes probar 300 para un look más fino */
+  color: var(--text-light);
+  font-size: 1.05rem; /* <-- AUMENTAMOS TAMAÑO para legibilidad */
+  margin-bottom: 1rem;
+}
+
+.product-price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--primary); /* El precio es un buen lugar para el acento */
+  margin-bottom: 1rem;
+}
+
+.product-btn {
+  display: inline-block;
+  text-align: center;
+  background: none; /* SIN fondo */
+  color: var(--primary); /* Color de acento */
+  padding: 0.25rem 0;
+  border-radius: 0;
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 2px solid transparent; /* Espacio para hover */
+  transition: border-color 0.3s ease;
+}
+
+.product-btn:hover {
+  background: none;
+  border-bottom-color: var(--primary); /* Subrayado elegante */
+}
+
+/* === CONTACT === */
+.contact {
+  /* Sin fondo */
+  padding: 4rem 0;
+  text-align: center;
+  border-top: 1px solid var(--border-light);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.contact-card {
+  /* Eliminamos fondo, borde, radio y padding */
+  padding: 1rem;
+}
+
+.contact-card i {
+  font-size: 2.2rem;
+  color: var(--primary); /* Icono de acento */
+  margin-bottom: 1rem;
+}
+
+.contact-card h3 {
+    
+  font-size: 1.2rem;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.contact-card p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+.btn-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--primary);
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+.btn-link:hover {
+  background: none;
+  opacity: 0.7;
+}
+
+/* === SOCIAL === */
+.social {
+  padding: 3rem 1rem;
+  text-align: center;
+  /* Sin fondo */
+  border-top: 1px solid var(--border-light);
+  font-family: 'Cormorant Garamond Italic', serif; /* <-- APLICA LA FUENTE */
+}
+
+.social h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.social-links a {
+  font-size: 1.4rem;
+  color: var(--text-light); /* Iconos suaves */
+  transition: color 0.3s;
+}
+
+.social-links a:hover {
+  color: var(--primary); /* Acento en hover */
+}
+
+/* === FOOTER === */
+.footer {
+  text-align: center;
+  background: none;
+  color: var(--text-light);
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.footer p {
+  margin-bottom: 0.5rem;
+}
+
+.footer i {
+  color: var(--primary); /* Corazón de acento */
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .hero h2 {
+    font-size: 3rem;
+  }
+  .section-title {
+    font-size: 1.6rem;
+  }
+}

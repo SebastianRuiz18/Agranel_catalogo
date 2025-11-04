@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Navideño - A granel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo-link">
+                <img src="img/agranellogo.png" alt="A Granel - Un gusto sin culpa">
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Catalogo Navidad 2025</h2>
+            <p>Ordena ahora y celebra con los mejores snacks de la temporada</p>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products">
+        <div class="container">
+            <div class="products-grid" id="productsGrid">
+                <!-- Los productos se cargan desde data.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact">
+        <div class="container">
+            <h2 class="section-title">Encuéntranos</h2>
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Ubicación</h3>
+                    <p>Av albaroja 13716 esquina nacori, Tijuana, Baja California 22195</p>
+                    <a href="https://maps.app.goo.gl/vkNE84FqZd35XEVo7" target="_blank" class="btn-link">Ver en mapa</a>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-phone"></i>
+                    <h3>Teléfono</h3>
+                    <p>+52 664 112 2626</p>
+                    <a href="tel:+526641122626" class="btn-link">Llamar ahora</a>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Email</h3>
+                    <p>agraneltj@gmail.com</p>
+                    <a href="mailto:agraneltj@gmail.com" class="btn-link">Enviar correo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media -->
+    <section class="social">
+        <div class="container">
+            <h3>Síguenos en redes sociales</h3>
+            <div class="social-links">
+                <a href="https://www.facebook.com/agraneltj/photos?locale=es_LA" target="_blank" aria-label="Facebook">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="https://www.instagram.com/agraneltj?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://wa.me/526641122626" target="_blank" aria-label="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 A Granel. Todos los derechos reservados.</p>
+            <p>Hecho con <i class="fa-solid fa-heart"></i> para esta Navidad</p>
+        </div>
+    </footer>
+
+    <!-- Scripts - NO cambiar el orden -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
