@@ -7,40 +7,43 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
+
+<!-- La clase 'login-page-body' se añadirá/quitará con JS -->
 <body>
     
-    <header>
-        <div class="logo-container">
-            <img src="img/agranellogo.png" alt="Agranel Logo" class="logo">
-        </div>
-        <nav class="main-nav">
-            <a href="index.html">Catálogo</a>
-            <a href="admin.html" class="active">Admin</a>
-        </nav>
-    </header>
+    <!-- Contenedor de Login (Visible por defecto) -->
+    <div id="loginContainer" class="login-container" style="display: none;">
+        <img src="img/agranellogo.png" alt="Agranel Logo" class="logo-login">
+        <h1>Panel de Administración</h1>
+        <p>Inicia sesión con tu cuenta de Google autorizada.</p>
+        <button id="btnLoginGoogle" class="btn btn-google">
+            <i class="fab fa-google"></i> Iniciar sesión con Google
+        </button>
+    </div>
 
-    <main class="admin-container">
+    <!-- Panel de Admin (Oculto por defecto) -->
+    <div id="adminPanel" style="display: none;">
+        
+        <!-- El header (tu diseño original) ahora está DENTRO del panel -->
+        <header>
+            <div class="logo-container">
+                <img src="img/agranellogo.png" alt="Agranel Logo" class="logo">
+            </div>
+            <nav class="main-nav">
+                <a href="index.html">Ver Catálogo</a>
+                <a href="admin.html" class="active">Admin</a>
+                <button id="btnLogout" class="btn-logout">
+                    Cerrar Sesión
+                </button>
+            </nav>
+        </header>
 
-        <!-- Contenedor de Login -->
-        <div id="loginContainer" class="login-prompt">
-            <h1>Panel de Administración</h1>
-            <p>Debes iniciar sesión para administrar los productos.</p>
-            <button id="btnLoginGoogle" class="btn btn-primary btn-google">
-                <i class="fab fa-google"></i> Iniciar sesión con Google
-            </button>
-        </div>
-
-        <!-- Panel de Admin (Oculto por defecto) -->
-        <div id="adminPanel" style="display: none;">
-            
+        <main class="admin-container">
             <div class="admin-header">
                 <h2>Administrar Productos</h2>
-                <button id="btnLogout" class="btn btn-cancel">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </button>
             </div>
 
-            <!-- Formulario de Producto -->
+            <!-- Formulario de Producto (Tu diseño original) -->
             <div class="admin-form-container">
                 <h3 id="formTitle">Agregar Nuevo Producto</h3>
                 <form id="productForm" class="product-form">
@@ -82,16 +85,16 @@
                 </form>
             </div>
 
-            <!-- Lista de Productos -->
+            <!-- Lista de Productos (Tu diseño original) -->
             <div class="admin-products-list" id="adminProductsList">
                 <!-- Los productos se cargarán aquí -->
             </div>
-        </div>
 
-    </main>
+        </main> <!-- Fin de .admin-container -->
+
+    </div> <!-- Fin de #adminPanel -->
 
     <!-- Carga los scripts como módulos -->
-    <!-- MUY IMPORTANTE: admin.js debe ser 'type="module"' -->
     <script src="admin.js" type="module"></script>
 </body>
 </html>

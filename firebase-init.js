@@ -3,7 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, getDocs, doc, setDoc, addDoc, deleteDoc, getDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Tu configuración de Firebase que pegaste
+// Tu configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBRMRsURjYl7tpt3YMmbVpfqQbe6U9_EMM",
   authDomain: "agranel-da89b.firebaseapp.com",

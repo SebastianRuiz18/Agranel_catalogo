@@ -71,8 +71,3 @@ async function cargarProductosDesdeFirebase() {
         listaProductos.innerHTML = '<p class="loader">No se pudieron cargar los productos. Intenta de nuevo más tarde.</p>';
     }
 }
-
-// Ya no necesitas las funciones de localStorage
-// function cargarProductosDesdeLocalStorage() { ... }
-// function cargarProductosIniciales() { ... }
-// function mostrarProductos(productos) { ... }

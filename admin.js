@@ -6,8 +6,7 @@ import {
 } from './firebase-init.js';
 
 // --- ATENCIÓN ---
-// Pon aquí el email de la persona que podrá administrar
-// Puedes agregar más separándolos con comas
+// Email autorizado para administrar.
 const ADMIN_EMAIL = "seruci93@gmail.com";
 // ----------------
 
@@ -21,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnLogout = document.getElementById('btnLogout');
     const adminPanel = document.getElementById('adminPanel');
     const loginContainer = document.getElementById('loginContainer');
+    
+    // Si algún elemento no existe (p.ej. en index.html), no hagas nada
+    if (!btnLogin || !adminPanel || !loginContainer) return;
 
     // Escucha cambios en el estado de autenticación
     onAuthStateChanged(auth, (user) => {
@@ -29,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (user.email === ADMIN_EMAIL) {
                 // Usuario es EL ADMIN
                 console.log('Admin conectado:', user.displayName);
+                document.body.classList.remove('login-page-body'); // Quita fondo centrado
                 adminPanel.style.display = 'block';
                 loginContainer.style.display = 'none';
                 // Ahora que sabemos que es admin, cargamos los productos
@@ -41,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Usuario no está logueado
             console.log('Usuario desconectado.');
+            document.body.classList.add('login-page-body'); // Pone fondo centrado
             adminPanel.style.display = 'none';
             loginContainer.style.display = 'block';
         }
@@ -54,11 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Manejador del botón de Logout
-    btnLogout.addEventListener('click', () => {
-        signOut(auth);
-    });
+    if(btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            signOut(auth);
+        });
+    }
 
-    // Manejador del formulario (movido aquí)
+    // Manejador del formulario
     document.getElementById('productForm').addEventListener('submit', manejarSubmitFormulario);
 });
 // --- FIN DE LÓGICA DE AUTENTICACIÓN ---
@@ -67,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Cargar productos en el panel admin (VERSIÓN FIREBASE)
 async function cargarProductosAdmin() {
     const lista = document.getElementById('adminProductsList');
-    lista.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">Cargando productos...</p>';
+    lista.innerHTML = '<p style="text-align: center; color: var(--text-dark); padding: 2rem;">Cargando productos...</p>';
     
     try {
         const q = query(collection(db, 'productos'), orderBy('nombre'));
@@ -76,7 +82,7 @@ async function cargarProductosAdmin() {
         lista.innerHTML = ''; // Limpiar "Cargando..."
         
         if (snapshot.empty) {
-            lista.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">No hay productos. Agrega el primero!</p>';
+            lista.innerHTML = '<p style="text-align: center; color: var(--text-dark); padding: 2rem;">No hay productos. Agrega el primero!</p>';
             return;
         }
         
@@ -119,7 +125,7 @@ async function cargarProductosAdmin() {
 
     } catch (error) {
         console.error("Error al cargar productos:", error);
-        lista.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">Error al cargar productos.</p>';
+        lista.innerHTML = '<p style="text-align: center; color: var(--text-dark); padding: 2rem;">Error al cargar productos.</p>';
     }
 }
 
@@ -199,9 +205,10 @@ async function editarProducto(id) {
 
 // Confirmar eliminación
 function confirmarEliminar(id, nombre) {
-    if (confirm(`¿Estás seguro de eliminar "${nombre}"?`)) {
+    // Usamos un modal personalizado en lugar de confirm()
+    mostrarConfirmacion(`¿Estás seguro de eliminar "${nombre}"?`, () => {
         eliminarProducto(id);
-    }
+    });
 }
 
 // Eliminar producto (VERSIÓN FIREBASE)
@@ -233,7 +240,6 @@ function limpiarFormulario() {
 function mostrarMensaje(texto, tipo) {
     const mensaje = document.createElement('div');
     mensaje.textContent = texto;
-    mensaje.className = `admin-message ${tipo}`; // Usa clases de styles.css si existen, o aplica estilos
     mensaje.style.cssText = `
         position: fixed;
         top: 20px;
@@ -243,7 +249,7 @@ function mostrarMensaje(texto, tipo) {
         padding: 1rem 1.5rem;
         border-radius: 6px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
+        z-index: 1050;
         font-weight: 500;
         animation: slideIn 0.3s ease;
     `;
@@ -254,6 +260,56 @@ function mostrarMensaje(texto, tipo) {
         mensaje.style.animation = 'slideOut 0.3s ease forwards';
         setTimeout(() => mensaje.remove(), 300);
     }, 3000);
+}
+
+// Mostrar modal de confirmación (reemplazo de confirm())
+function mostrarConfirmacion(texto, onConfirm) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 1010;
+        display: flex; align-items: center; justify-content: center;
+    `;
+    
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        background: white; padding: 2rem; border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2); max-width: 400px;
+        text-align: center; font-family: var(--font-body);
+    `;
+    
+    const p = document.createElement('p');
+    p.textContent = texto;
+    p.style.cssText = 'font-size: 1.1rem; color: #333; margin-bottom: 1.5rem;';
+    
+    const actions = document.createElement('div');
+    actions.style.cssText = 'display: flex; gap: 1rem; justify-content: center;';
+    
+    const btnConfirm = document.createElement('button');
+    btnConfirm.textContent = 'Eliminar';
+    btnConfirm.className = 'btn-delete'; // Reusa tu clase de botón
+    btnConfirm.style.cssText = 'background-color: #d9534f; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: var(--font-body); font-size: 0.9rem;';
+    
+    const btnCancel = document.createElement('button');
+    btnCancel.textContent = 'Cancelar';
+    btnCancel.className = 'btn-cancel'; // Reusa tu clase de botón
+    btnCancel.style.cssText = 'background-color: #999; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: var(--font-body); font-size: 0.9rem;';
+    
+    btnConfirm.onclick = () => {
+        onConfirm();
+        document.body.removeChild(overlay);
+    };
+    
+    btnCancel.onclick = () => {
+        document.body.removeChild(overlay);
+    };
+    
+    actions.appendChild(btnCancel);
+    actions.appendChild(btnConfirm);
+    modal.appendChild(p);
+    modal.appendChild(actions);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
 }
 
 // Agregar animaciones CSS (si no están en styles.css)
@@ -268,7 +324,10 @@ style.textContent = `
         to { transform: translateX(100%); opacity: 0; }
     }
     .btn-cancel {
-        display: none;
+        display: none; /* Oculta el de cancelar por defecto */
+    }
+    .form-actions .btn-cancel {
+        display: inline-flex; /* Muestra el del formulario */
     }
 `;
 document.head.appendChild(style);
