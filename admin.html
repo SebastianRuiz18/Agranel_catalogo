@@ -3,90 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin - A Granel</title>
+    <title>Panel de Administración - Agranel</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <a href="/" class="logo-link">
-                <img src="img/agranellogo.png" alt="A Granel - Un gusto sin culpa">
-            </a>
+    
+    <header>
+        <div class="logo-container">
+            <img src="img/agranellogo.png" alt="Agranel Logo" class="logo">
         </div>
+        <nav class="main-nav">
+            <a href="index.html">Catálogo</a>
+            <a href="admin.html" class="active">Admin</a>
+        </nav>
     </header>
 
-    <!-- Admin Panel -->
-    <section class="admin-panel">
-        <div class="container">
+    <main class="admin-container">
+
+        <!-- Contenedor de Login -->
+        <div id="loginContainer" class="login-prompt">
+            <h1>Panel de Administración</h1>
+            <p>Debes iniciar sesión para administrar los productos.</p>
+            <button id="btnLoginGoogle" class="btn btn-primary btn-google">
+                <i class="fab fa-google"></i> Iniciar sesión con Google
+            </button>
+        </div>
+
+        <!-- Panel de Admin (Oculto por defecto) -->
+        <div id="adminPanel" style="display: none;">
+            
             <div class="admin-header">
-                <h2>Panel de Administración</h2>
-                <a href="index.html" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Volver al catálogo
-                </a>
+                <h2>Administrar Productos</h2>
+                <button id="btnLogout" class="btn btn-cancel">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
             </div>
 
-            <!-- Formulario para agregar/editar producto -->
+            <!-- Formulario de Producto -->
             <div class="admin-form-container">
                 <h3 id="formTitle">Agregar Nuevo Producto</h3>
                 <form id="productForm" class="product-form">
-                    <input type="hidden" id="productId">
                     
                     <div class="form-group">
-                        <label for="productName">Nombre del Producto *</label>
-                        <input type="text" id="productName" required placeholder="Ej: Cajita de Mixito">
+                        <label for="productName">Nombre del Producto</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productDescription">Descripción</label>
+                        <textarea id="productDescription" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group-inline">
+                        <div class="form-group">
+                            <label for="productPrice">Precio</label>
+                            <input type="text" id="productPrice" placeholder="Ej: $99.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productImage">URL de la Imagen</label>
+                            <input type="url" id="productImage" placeholder="https://i.imgur.com/..." required>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="productDescription">Descripción *</label>
-                        <textarea id="productDescription" required rows="3" placeholder="Describe el producto..."></textarea>
+                        <label for="productWhatsapp">Link de WhatsApp</label>
+                        <input type="url" id="productWhatsapp" placeholder="https://wa.me/..." required>
                     </div>
-
-                    <div class="form-group">
-                        <label for="productPrice">Precio *</label>
-                        <input type="text" id="productPrice" required placeholder="Ej: $55.00">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="productImage">URL de la Imagen *</label>
-                        <input type="url" id="productImage" required placeholder="https://...">
-                        <small>Puedes usar enlaces de Google Drive, Facebook, etc.</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="productWhatsapp">Mensaje de WhatsApp *</label>
-                        <input type="text" id="productWhatsapp" required placeholder="Ej: Hola! Me interesa la Cajita de Mixito">
-                    </div>
-
+                    
                     <div class="form-actions">
-                        <button type="submit" class="btn-submit">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Guardar Producto
                         </button>
-                        <button type="button" class="btn-cancel" onclick="cancelarEdicion()">
-                            <i class="fas fa-times"></i> Cancelar
+                        <button type="button" class="btn btn-cancel" onclick="cancelarEdicion()">
+                            Cancelar
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Lista de productos -->
-            <div class="admin-products">
-                <h3>Productos Existentes</h3>
-                <div id="adminProductsList" class="admin-products-list">
-                    <!-- Se cargan dinámicamente -->
-                </div>
+            <!-- Lista de Productos -->
+            <div class="admin-products-list" id="adminProductsList">
+                <!-- Los productos se cargarán aquí -->
             </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 A Granel. Panel de Administración</p>
-        </div>
-    </footer>
+    </main>
 
-    <script src="admin.js"></script>
+    <!-- Carga los scripts como módulos -->
+    <!-- MUY IMPORTANTE: admin.js debe ser 'type="module"' -->
+    <script src="admin.js" type="module"></script>
 </body>
 </html>
