@@ -133,17 +133,17 @@ async function cargarProductosAdmin() {
 async function manejarSubmitFormulario(e) {
     e.preventDefault();
     
+    // Objeto producto ya no incluye 'whatsapp'
     const producto = {
         nombre: document.getElementById('productName').value.trim(),
         descripcion: document.getElementById('productDescription').value.trim(),
         precio: document.getElementById('productPrice').value.trim(),
-        imagen: document.getElementById('productImage').value.trim(),
-        whatsapp: document.getElementById('productWhatsapp').value.trim()
+        imagen: document.getElementById('productImage').value.trim()
     };
     
-    // Validación simple
-    if (!producto.nombre || !producto.precio || !producto.imagen || !producto.whatsapp) {
-        mostrarMensaje('Por favor, completa todos los campos requeridos.', 'error');
+    // Validación (ya no incluye 'whatsapp')
+    if (!producto.nombre || !producto.precio || !producto.imagen) {
+        mostrarMensaje('Por favor, completa nombre, precio e imagen.', 'error');
         return;
     }
 
@@ -187,7 +187,7 @@ async function editarProducto(id) {
         document.getElementById('productDescription').value = producto.descripcion;
         document.getElementById('productPrice').value = producto.precio;
         document.getElementById('productImage').value = producto.imagen;
-        document.getElementById('productWhatsapp').value = producto.whatsapp;
+        // document.getElementById('productWhatsapp').value = producto.whatsapp; // ELIMINADO
         
         document.getElementById('formTitle').textContent = 'Editar Producto';
         document.querySelector('.btn-cancel').style.display = 'inline-flex';
