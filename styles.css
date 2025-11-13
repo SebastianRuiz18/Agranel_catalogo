@@ -25,6 +25,7 @@
     --shadow-color: rgba(0, 0, 0, 0.1);
     --font-heading: 'Sloop Script', 'Cormorant Garamond', serif;
     --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --disabled-color: #aaa;
 }
 
 /* --- Reseteo Básico --- */
@@ -132,6 +133,22 @@ h1 {
     color: var(--primary-color);
     margin-bottom: 0.5rem;
 }
+/* h2 para "Recomendados" */
+.featured-section h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 2.5rem;
+    color: var(--text-dark);
+    margin-bottom: 2rem;
+}
+.section-divider {
+    border: none;
+    height: 1px;
+    background-color: var(--secondary-color);
+    margin: 3rem auto;
+    width: 80%;
+}
 
 .subtitle {
     font-family: 'Cormorant Garamond', serif;
@@ -143,6 +160,8 @@ h1 {
 
 .products-grid {
     display: grid;
+    /* --- CAMBIO RESPONSIVO --- */
+    /* En pantallas grandes, mínimo 280px */
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
 }
@@ -167,6 +186,7 @@ h1 {
     width: 100%;
     height: 200px;
     object-fit: cover;
+    transition: filter 0.3s ease;
 }
 
 .product-info {
@@ -210,14 +230,33 @@ h1 {
     font-weight: 600;
     transition: background-color 0.3s ease;
 }
-
 .btn-whatsapp i {
     margin-right: 0.5rem;
 }
-
 .btn-whatsapp:hover {
     background-color: #5a7044; /* Verde más oscuro */
 }
+
+/* --- ¡NUEVO! Estilos de "Agotado" --- */
+.product-card.agotado {
+    /* No hace falta el fondo gris, solo el filtro de la imagen */
+}
+.product-card.agotado .product-image {
+    filter: grayscale(100%) opacity(60%);
+}
+.product-card.agotado .product-title,
+.product-card.agotado .product-price {
+    color: var(--disabled-color);
+}
+.btn-whatsapp[disabled] {
+    background-color: var(--disabled-color);
+    cursor: not-allowed;
+}
+.btn-whatsapp[disabled]:hover {
+    background-color: var(--disabled-color);
+}
+/* ---------------------------------- */
+
 
 .loader {
     font-family: 'Cormorant Garamond', serif;
@@ -240,18 +279,10 @@ footer {
 /* --- Panel de Administración (admin.html) --- */
 
 .admin-container {
-    max-width: 1400px; /* Aumentado para 3 columnas */
+    max-width: 1400px;
     margin: 2rem auto;
     padding: 0 2rem;
 }
-
-.admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
 .admin-header h2 {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 700;
@@ -259,8 +290,6 @@ footer {
     font-size: 2.5rem;
     color: var(--text-dark);
 }
-
-/* Formularios */
 .admin-form-container {
     background-color: var(--card-background);
     padding: 2rem;
@@ -268,7 +297,6 @@ footer {
     box-shadow: 0 4px 15px var(--shadow-color);
     margin-bottom: 3rem;
 }
-
 .admin-form-container h3 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.75rem;
@@ -276,32 +304,28 @@ footer {
     margin-bottom: 1.5rem;
     text-align: center;
 }
-
 .product-form .form-group {
     margin-bottom: 1.25rem;
 }
-
 .product-form .form-group-inline {
     display: flex;
     gap: 1.5rem;
     margin-bottom: 1.25rem;
 }
-
 .form-group-inline .form-group {
     width: 100%;
     margin-bottom: 0;
 }
-
 .product-form label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
     color: #444;
 }
-
 .product-form input[type="text"],
 .product-form input[type="url"],
-.product-form select, /* <--- AÑADIDO */
+/* input[type="file"] YA NO ESTÁ */
+.product-form select,
 .product-form textarea {
     width: 100%;
     padding: 0.75rem;
@@ -310,30 +334,26 @@ footer {
     font-family: var(--font-body);
     font-size: 1rem;
     transition: border-color 0.3s, box-shadow 0.3s;
-    background-color: #fff; /* Asegurar fondo blanco en select */
+    background-color: #fff;
 }
 
 .product-form input:focus,
-.product-form select:focus, /* <--- AÑADIDO */
+.product-form select:focus,
 .product-form textarea:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 5px rgba(154, 106, 77, 0.3);
 }
-
 .product-form textarea {
     resize: vertical;
     min-height: 80px;
 }
-
 .form-actions {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
     margin-top: 1.5rem;
 }
-
-/* Botones Generales */
 .btn {
     padding: 0.75rem 1.5rem;
     border: none;
@@ -349,15 +369,17 @@ footer {
     gap: 0.5rem;
     transition: all 0.3s ease;
 }
-
+.btn:disabled {
+    background-color: var(--disabled-color);
+    cursor: not-allowed;
+}
 .btn-primary {
     background-color: var(--accent-color);
     color: var(--text-light);
 }
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
     background-color: #5a7044;
 }
-
 .btn-cancel {
     background-color: #999;
     color: var(--text-light);
@@ -372,7 +394,6 @@ footer {
     flex-direction: column;
     gap: 1.5rem;
 }
-
 .admin-product-item {
     background-color: var(--card-background);
     border-radius: 12px;
@@ -382,7 +403,6 @@ footer {
     padding: 1rem;
     gap: 1.5rem;
 }
-
 .admin-product-image {
     width: 120px;
     height: 100px;
@@ -390,15 +410,17 @@ footer {
     border-radius: 8px;
     flex-shrink: 0;
 }
-
 .admin-product-info {
     flex-grow: 1;
 }
-
 .admin-product-info h4 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.5rem;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 .admin-product-info p {
     font-size: 0.9rem;
@@ -410,14 +432,12 @@ footer {
     font-weight: bold;
     color: var(--accent-color);
 }
-
 .admin-product-actions {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     flex-shrink: 0;
 }
-
 .btn-edit, .btn-delete {
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
@@ -429,7 +449,6 @@ footer {
     gap: 0.5rem;
     transition: background-color 0.3s ease;
 }
-
 .btn-edit {
     background-color: #f0ad4e;
     color: white;
@@ -437,7 +456,6 @@ footer {
 .btn-edit:hover {
     background-color: #ec971f;
 }
-
 .btn-delete {
     background-color: #d9534f;
     color: white;
@@ -446,88 +464,7 @@ footer {
     background-color: #c9302c;
 }
 
-/* --- Responsive --- */
-@media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 1rem;
-    }
-
-    .logo-container {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .nav-toggle {
-        display: block;
-    }
-
-    .main-nav {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        gap: 0.5rem;
-        margin-top: 1rem;
-    }
-
-    .main-nav.active {
-        display: flex;
-    }
-
-    .main-nav a, .btn-logout {
-        width: 100%;
-        text-align: center;
-        padding: 0.75rem;
-    }
-    .main-nav a.active {
-        background-color: var(--secondary-color);
-        border-bottom: none;
-        border-radius: 6px;
-    }
-    .btn-logout {
-        border: 1px solid var(--primary-color);
-    }
-    
-    .catalog-container, .admin-container {
-        padding: 0 1rem;
-    }
-
-    h1 {
-        font-size: 3rem;
-    }
-    .subtitle {
-        font-size: 1.25rem;
-    }
-
-    .admin-product-item {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 1.5rem;
-    }
-    .admin-product-image {
-        width: 100%;
-        height: 150px;
-    }
-    .admin-product-actions {
-        flex-direction: row;
-        width: 100%;
-    }
-    .btn-edit, .btn-delete {
-        flex-grow: 1;
-        justify-content: center;
-    }
-    
-    .form-group-inline {
-        flex-direction: column;
-        gap: 1.25rem;
-    }
-}
-
-
-/* --- INICIO DE ESTILOS AGREGADOS (LOGIN Y CATEGORÍAS) --- */
+/* --- INICIO DE ESTILOS AGREGADOS --- */
 
 /* --- Estilos Login (Sin cambios) --- */
 .login-page-body {
@@ -695,32 +632,31 @@ footer {
     background-color: var(--background-color);
     padding: 0.75rem 1rem;
     border-radius: 6px;
-    gap: 0.5rem; /* Añadido */
+    gap: 0.5rem;
 }
-/* --- NUEVOS ESTILOS PARA EDICIÓN DE CATEGORÍA --- */
 .category-list-item input[type="text"] {
     flex-grow: 1;
-    border: 1px solid transparent; /* Se ve como texto */
+    border: 1px solid transparent;
     background: transparent;
     padding: 0.25rem;
     font-weight: 500;
     font-size: 1rem;
     font-family: var(--font-body);
-    width: 100%; /* Para que ocupe el espacio */
+    width: 100%;
 }
 .category-list-item input[type="text"]:disabled {
-    color: var(--text-dark); /* Color normal de texto */
+    color: var(--text-dark);
     cursor: default;
 }
 .category-list-item input[type="text"]:not(:disabled) {
-    border-color: #ccc; /* Borde visible al editar */
+    border-color: #ccc;
     background-color: white;
 }
 .btn-edit-category, .btn-save-category {
     background: none; border: none; cursor: pointer;
-    font-size: 1rem; /* Aumentado */
+    font-size: 1rem;
     padding: 0.25rem;
-    flex-shrink: 0; /* Para que no se encoja */
+    flex-shrink: 0;
 }
 .btn-edit-category { color: #f0ad4e; }
 .btn-save-category { color: var(--accent-color); }
@@ -732,11 +668,10 @@ footer {
     border: none;
     color: #d9534f;
     cursor: pointer;
-    font-size: 1rem; /* Aumentado */
+    font-size: 1rem;
     padding: 0.25rem;
     flex-shrink: 0;
 }
-/* ----------------------------------------------- */
 
 .admin-product-category {
     font-style: italic;
@@ -746,9 +681,109 @@ footer {
     margin-bottom: 0.5rem;
 }
 
-/* --- Responsive para la nueva retícula --- */
+/* --- Previsualización de Imagen (YA NO SE USA) --- */
+/*
+.image-preview {
+    ...
+}
+*/
+
+/* --- Estilos de Toggles (SE QUEDAN) --- */
+.toggles-container {
+    justify-content: space-around;
+    padding: 1rem 0;
+    border-top: 1px solid var(--secondary-color);
+    border-bottom: 1px solid var(--secondary-color);
+}
+.toggle-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+.toggle-label {
+    font-weight: 600;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+.toggle-tooltip {
+    background-color: var(--disabled-color);
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: help;
+}
+
+/* Estilo del interruptor (toggle) */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 28px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: var(--accent-color);
+}
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+/* --- Indicadores en Lista de Admin (SE QUEDAN) --- */
+.indicator {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    color: white;
+}
+.indicator.featured {
+    background-color: #f0ad4e;
+    font-size: 1rem;
+    padding: 0 0.5rem;
+}
+.indicator.stock {
+    background-color: #d9534f;
+}
+
+
+/* --- Responsive --- */
 @media (max-width: 1200px) {
     .admin-grid-layout {
+        /* Pasa a 2 columnas: Formulario y Lista (categorías abajo) */
         grid-template-columns: 1fr 1fr;
         grid-template-areas: 
             "form list"
@@ -764,6 +799,7 @@ footer {
 }
 @media (max-width: 900px) {
     .admin-grid-layout {
+        /* Pasa a 1 columna */
         grid-template-columns: 1fr;
         grid-template-areas: 
             "form"
@@ -781,4 +817,114 @@ footer {
         margin-bottom: 2rem;
     }
 }
-/* --- FIN DE ESTILOS AGREGADOS --- */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+    .logo-container {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .nav-toggle {
+        display: block;
+    }
+    .main-nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    .main-nav.active {
+        display: flex;
+    }
+    .main-nav a, .btn-logout {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem;
+    }
+    .main-nav a.active {
+        background-color: var(--secondary-color);
+        border-bottom: none;
+        border-radius: 6px;
+    }
+    .btn-logout {
+        border: 1px solid var(--primary-color);
+    }
+    
+    .catalog-container, .admin-container {
+        padding: 0 1rem;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+    .subtitle {
+        font-size: 1.25rem;
+    }
+
+    .admin-product-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.5rem;
+    }
+    .admin-product-image {
+        width: 100%;
+        height: 150px;
+    }
+    .admin-product-actions {
+        flex-direction: row;
+        width: 100%;
+    }
+    .btn-edit, .btn-delete {
+        flex-grow: 1;
+        justify-content: center;
+    }
+    
+    .form-group-inline {
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+}
+
+/* --- ¡NUEVO! 2 Columnas en Móvil para Catálogo --- */
+@media (max-width: 600px) {
+    .products-grid {
+        /* Forzar 2 columnas en móvil */
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem; /* Reducir el gap */
+    }
+    .product-info {
+        padding: 1rem; /* Reducir padding */
+    }
+    .product-title {
+        font-size: 1.25rem; /* Reducir fuente */
+    }
+    .product-description {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        /* Ocultar descripción en móvil para ahorrar espacio */
+        display: none; 
+    }
+    .product-price {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    .btn-whatsapp {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    .catalog-container {
+        padding: 0 1rem;
+    }
+    .featured-section h2 {
+        font-size: 2rem;
+    }
+    h1 {
+        font-size: 2.5rem;
+    }
+}

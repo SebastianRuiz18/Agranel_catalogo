@@ -51,7 +51,6 @@
                         
                         <div class="form-group">
                             <label for="productCategory">Categoría</label>
-                            <!-- Este 'select' ahora usará IDs de categoría -->
                             <select id="productCategory" required>
                                 <option value="">-- Seleccionar Categoría --</option>
                             </select>
@@ -72,14 +71,43 @@
                                 <label for="productPrice">Precio</label>
                                 <input type="text" id="productPrice" placeholder="Ej: $99.00" required>
                             </div>
-                            <div class="form-group">
-                                <label for="productImage">URL de la Imagen</label>
-                                <input type="url" id="productImage" placeholder="https://i.imgur.com/..." required>
+                        </div>
+
+                        <!-- === ¡CAMBIO! Volvemos al input de URL === -->
+                        <div class="form-group">
+                            <label for="productImage">URL de la Imagen</label>
+                            <input type="url" id="productImage" placeholder="https://i.imgur.com/..." required>
+                        </div>
+                        <!-- Ya no hay previsualización, se quita -->
+
+
+                        <!-- === ¡NUEVO! Toggles (Estos SÍ se quedan) === -->
+                        <div class="form-group-inline toggles-container">
+                            <div class="toggle-group">
+                                <label for="productFeatured" class="toggle-label">
+                                    <span>Producto Destacado</span>
+                                    <span class="toggle-tooltip" title="Muestra este producto en la sección 'Recomendados' al inicio de la página.">?</span>
+                                </label>
+                                <label class="switch">
+                                    <input type="checkbox" id="productFeatured">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-group">
+                                <label for="productStock" class="toggle-label">
+                                    <span>Producto Agotado</span>
+                                    <span class="toggle-tooltip" title="Marca este producto como 'Agotado'. Se verá en el catálogo pero no se podrá pedir.">?</span>
+                                </label>
+                                <label class="switch">
+                                    <input type="checkbox" id="productStock">
+                                    <span class="slider"></span>
+                                </label>
                             </div>
                         </div>
+
                         
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="btnSaveProduct">
                                 <i class="fas fa-save"></i> Guardar Producto
                             </button>
                             <button type="button" class="btn btn-cancel" onclick="cancelarEdicion()">

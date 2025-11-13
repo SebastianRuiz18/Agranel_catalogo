@@ -3,8 +3,8 @@ import {
     auth, db, 
     GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
     collection, getDocs, doc, setDoc, addDoc, deleteDoc, getDoc, orderBy, query,
-    where // <--- Función 'where' importada
-} from './firebase-init.js';
+    where
+} from './firebase-init.js'; // <-- Ya no hay nada de Storage
 
 // --- ATENCIÓN ---
 // Email autorizado para administrar.
@@ -68,69 +68,55 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Manejador del formulario de CATEGORÍA
     document.getElementById('categoryForm').addEventListener('submit', guardarNuevaCategoria);
+
+    // --- Ya no hay previsualización de imagen ---
 });
 // --- FIN DE LÓGICA DE AUTENTICACIÓN ---
 
 
 // ======================================================
-// === NUEVA SECCIÓN: ADMINISTRACIÓN DE CATEGORÍAS ===
+// === SECCIÓN: ADMINISTRACIÓN DE CATEGORÍAS (SIN CAMBIOS) ===
 // ======================================================
+// (Esta sección es idéntica a la anterior, funciona perfecto)
 
 async function cargarYMostrarCategorias() {
     const categoryList = document.getElementById('categoryList');
     const productCategorySelect = document.getElementById('productCategory');
     
     categoryList.innerHTML = '<p>Cargando...</p>';
-    
-    // Guardar el valor seleccionado (si hay uno) para no perderlo
     const valorPrevio = productCategorySelect.value;
     productCategorySelect.innerHTML = '<option value="">-- Seleccionar Categoría --</option>';
-    categoriasCache.clear(); // Limpiar cache
+    categoriasCache.clear();
 
     try {
         const q = query(collection(db, 'categorias'), orderBy('nombre'));
         const snapshot = await getDocs(q);
-        
-        categoryList.innerHTML = ''; // Limpiar
-        
+        categoryList.innerHTML = '';
         if (snapshot.empty) {
             categoryList.innerHTML = '<p>No hay categorías.</p>';
         }
-
         snapshot.forEach(doc => {
             const categoria = doc.data();
             const categoriaId = doc.id;
-            
-            // Guardar en cache
             categoriasCache.set(categoriaId, categoria.nombre);
             
-            // 1. Llenar la lista de "Administrar Categorías" (CON INPUTS Y BOTONES)
             const item = document.createElement('div');
             item.className = 'category-list-item';
-            item.id = `cat-item-${categoriaId}`; // ID para encontrarlo
+            item.id = `cat-item-${categoriaId}`;
             item.innerHTML = `
                 <input type="text" value="${categoria.nombre}" class="category-input" data-id="${categoriaId}" disabled>
-                
-                <button class="btn-edit-category" data-id="${categoriaId}" title="Editar">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn-save-category" data-id="${categoriaId}" title="Guardar" style="display: none;">
-                    <i class="fas fa-save"></i>
-                </button>
-                <button class="btn-delete-category" data-id="${categoriaId}" data-nombre="${categoria.nombre}" title="Eliminar">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <button class="btn-edit-category" data-id="${categoriaId}" title="Editar"><i class="fas fa-edit"></i></button>
+                <button class="btn-save-category" data-id="${categoriaId}" title="Guardar" style="display: none;"><i class="fas fa-save"></i></button>
+                <button class="btn-delete-category" data-id="${categoriaId}" data-nombre="${categoria.nombre}" title="Eliminar"><i class="fas fa-trash"></i></button>
             `;
             categoryList.appendChild(item);
             
-            // 2. Llenar el dropdown del formulario de productos (CON ID!)
             const option = document.createElement('option');
-            option.value = categoriaId; // <-- Guardamos el ID
-            option.textContent = categoria.nombre; // <-- Mostramos el Nombre
+            option.value = categoriaId;
+            option.textContent = categoria.nombre;
             productCategorySelect.appendChild(option);
         });
 
-        // Añadir event listeners a los botones de la lista
         categoryList.querySelectorAll('.btn-edit-category').forEach(btn => {
             btn.addEventListener('click', () => habilitarEdicionCategoria(btn.dataset.id));
         });
@@ -141,10 +127,7 @@ async function cargarYMostrarCategorias() {
             btn.addEventListener('click', () => confirmarEliminarCategoria(btn.dataset.id, btn.dataset.nombre));
         });
 
-        // Restaurar el valor previo del select
         productCategorySelect.value = valorPrevio;
-
-        // AHORA QUE TENEMOS LAS CATEGORÍAS, CARGAMOS LOS PRODUCTOS
         cargarProductosAdmin();
 
     } catch (error) {
@@ -157,30 +140,23 @@ async function guardarNuevaCategoria(e) {
     e.preventDefault();
     const input = document.getElementById('categoryName');
     const nombreCategoria = input.value.trim();
-    
     if (!nombreCategoria) return;
-
     try {
-        await addDoc(collection(db, 'categorias'), {
-            nombre: nombreCategoria
-        });
+        await addDoc(collection(db, 'categorias'), { nombre: nombreCategoria });
         mostrarMensaje('Categoría agregada', 'success');
         input.value = '';
-        cargarYMostrarCategorias(); // Recargar todo
+        cargarYMostrarCategorias();
     } catch (error) {
         console.error("Error guardando categoría:", error);
         mostrarMensaje('Error al guardar categoría', 'error');
     }
 }
 
-// --- NUEVAS FUNCIONES DE EDICIÓN ---
 function habilitarEdicionCategoria(id) {
     const item = document.getElementById(`cat-item-${id}`);
     const input = item.querySelector('.category-input');
-    
     input.disabled = false;
     input.focus();
-    
     item.querySelector('.btn-edit-category').style.display = 'none';
     item.querySelector('.btn-delete-category').style.display = 'none';
     item.querySelector('.btn-save-category').style.display = 'inline-flex';
@@ -190,39 +166,28 @@ async function guardarEdicionCategoria(id) {
     const item = document.getElementById(`cat-item-${id}`);
     const input = item.querySelector('.category-input');
     const nuevoNombre = input.value.trim();
-    
     if (!nuevoNombre) {
         mostrarMensaje('El nombre no puede estar vacío', 'error');
         return;
     }
-
     try {
         const docRef = doc(db, 'categorias', id);
-        await setDoc(docRef, { nombre: nuevoNombre }); // setDoc actualiza o sobrescribe
-        
+        await setDoc(docRef, { nombre: nuevoNombre });
         mostrarMensaje('Categoría actualizada', 'success');
-        
-        // Recargar todo para que se actualice el dropdown
         cargarYMostrarCategorias();
-
     } catch (error) {
         console.error("Error actualizando categoría:", error);
         mostrarMensaje('Error al actualizar', 'error');
     }
 }
 
-// --- BORRADO MÁS SEGURO ---
 async function confirmarEliminarCategoria(id, nombre) {
-    // Paso 1: Revisar si hay productos usando esta categoría
     try {
         const q = query(collection(db, 'productos'), where("categoriaId", "==", id));
         const snapshot = await getDocs(q);
-        
         if (!snapshot.empty) {
-            // Si hay productos, NO DEJAR BORRAR
             mostrarMensaje(`Error: No se puede borrar "${nombre}". Hay ${snapshot.size} productos usándola.`, 'error');
         } else {
-            // Si está vacía, preguntar
             mostrarConfirmacion(`¿Seguro que quieres eliminar "${nombre}"?`, () => {
                 eliminarCategoria(id);
             });
@@ -237,19 +202,20 @@ async function eliminarCategoria(id) {
     try {
         await deleteDoc(doc(db, 'categorias', id));
         mostrarMensaje('Categoría eliminada', 'success');
-        cargarYMostrarCategorias(); // Recargar todo
+        cargarYMostrarCategorias();
     } catch (error) {
         console.error("Error eliminando categoría:", error);
         mostrarMensaje('Error al eliminar categoría', 'error');
     }
 }
 
-
 // ======================================================
-// === SECCIÓN: ADMINISTRACIÓN DE PRODUCTOS (REFACTORIZADO) ===
+// === SECCIÓN: ADMINISTRACIÓN DE PRODUCTOS (MODIFICADO) ===
 // ======================================================
 
-// Cargar productos en el panel admin
+// --- Ya no hay función de uploadImage ---
+
+// Cargar productos en el panel admin (igual que antes)
 async function cargarProductosAdmin() {
     const lista = document.getElementById('adminProductsList');
     lista.innerHTML = '<p style="text-align: center; color: var(--text-dark); padding: 2rem;">Cargando productos...</p>';
@@ -259,7 +225,6 @@ async function cargarProductosAdmin() {
         const snapshot = await getDocs(q);
         
         lista.innerHTML = '';
-        
         if (snapshot.empty) {
             lista.innerHTML = '<p style="text-align: center; color: var(--text-dark); padding: 2rem;">No hay productos.</p>';
             return;
@@ -269,9 +234,12 @@ async function cargarProductosAdmin() {
             const producto = doc.data();
             producto.id = doc.id;
             
-            // Usar el cache para obtener el nombre de la categoría
             const nombreCategoria = categoriasCache.get(producto.categoriaId) || 'Sin Categoría';
             
+            // Añadir indicadores visuales para Destacado y Agotado
+            const destacadoIndicator = producto.destacado ? '<span class="indicator featured" title="Destacado">★</span>' : '';
+            const agotadoIndicator = producto.agotado ? '<span class="indicator stock" title="Agotado">Agotado</span>' : '';
+
             const item = document.createElement('div');
             item.className = 'admin-product-item';
             
@@ -279,9 +247,9 @@ async function cargarProductosAdmin() {
                 <img src="${producto.imagen}" 
                      alt="${producto.nombre}" 
                      class="admin-product-image"
-                     onerror="this.src='https://via.placeholder.com/120x100?text=Sin+Imagen'">
+                     onerror="this.src='https://placehold.co/120x100/f8f5f1/ccc?text=Sin+Imagen'">
                 <div class="admin-product-info">
-                    <h4>${producto.nombre}</h4>
+                    <h4>${producto.nombre} ${destacadoIndicator} ${agotadoIndicator}</h4>
                     <p class="admin-product-category">${nombreCategoria}</p>
                     <div class="admin-product-price">${producto.precio}</div>
                 </div>
@@ -314,23 +282,36 @@ async function cargarProductosAdmin() {
 // Manejar el envío del formulario
 async function manejarSubmitFormulario(e) {
     e.preventDefault();
-    
-    // Objeto producto AHORA USA 'categoriaId'
+    const btnSave = document.getElementById('btnSaveProduct');
+    btnSave.disabled = true;
+    btnSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+    // --- ¡CAMBIO! Volvemos a leer la URL del input ---
+    const imageUrl = document.getElementById('productImage').value.trim();
+
+    // Objeto producto (con Toggles, sin Storage)
     const producto = {
         categoriaId: document.getElementById('productCategory').value.trim(),
         nombre: document.getElementById('productName').value.trim(),
         descripcion: document.getElementById('productDescription').value.trim(),
         precio: document.getElementById('productPrice').value.trim(),
-        imagen: document.getElementById('productImage').value.trim()
+        imagen: imageUrl, // <-- URL del input
+        destacado: document.getElementById('productFeatured').checked,
+        agotado: document.getElementById('productStock').checked
     };
     
-    // Validación (AHORA USA 'categoriaId')
+    // Validación
     if (!producto.categoriaId) {
         mostrarMensaje('Por favor, selecciona una categoría.', 'error');
+        btnSave.disabled = false;
+        btnSave.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
         return;
     }
+    // ¡CAMBIO! La imagen URL ahora es requerida
     if (!producto.nombre || !producto.precio || !producto.imagen) {
-        mostrarMensaje('Por favor, completa nombre, precio e imagen.', 'error');
+        mostrarMensaje('Por favor, completa nombre, precio y URL de imagen.', 'error');
+        btnSave.disabled = false;
+        btnSave.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
         return;
     }
 
@@ -352,6 +333,9 @@ async function manejarSubmitFormulario(e) {
     } catch (error) {
         console.error("Error al guardar:", error);
         mostrarMensaje('Error al guardar el producto', 'error');
+    } finally {
+        btnSave.disabled = false;
+        btnSave.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
     }
 }
 
@@ -371,11 +355,18 @@ async function editarProducto(id) {
         productoEditando = id;
         
         // Llenar el formulario con los datos del producto
-        document.getElementById('productCategory').value = producto.categoriaId; // <-- CAMPO USA ID
+        document.getElementById('productCategory').value = producto.categoriaId;
         document.getElementById('productName').value = producto.nombre;
         document.getElementById('productDescription').value = producto.descripcion;
         document.getElementById('productPrice').value = producto.precio;
-        document.getElementById('productImage').value = producto.imagen;
+        
+        // --- ¡CAMBIO! Llenar el input de URL ---
+        document.getElementById('productImage').value = producto.imagen || '';
+        
+        // Llenar toggles (esto se queda)
+        document.getElementById('productFeatured').checked = producto.destacado || false;
+        document.getElementById('productStock').checked = producto.agotado || false;
+
         
         document.getElementById('formTitle').textContent = 'Editar Producto';
         document.querySelector('.btn-cancel').style.display = 'inline-flex';
@@ -397,6 +388,8 @@ function limpiarFormulario() {
     document.getElementById('productForm').reset();
     document.getElementById('formTitle').textContent = 'Agregar Nuevo Producto';
     document.querySelector('.btn-cancel').style.display = 'none';
+    
+    // --- Ya no hay que limpiar la previsualización ---
 }
 
 
@@ -404,6 +397,7 @@ function limpiarFormulario() {
 
 // Confirmar eliminación de PRODUCTO
 function confirmarEliminar(id, nombre) {
+    // (Ya no hay que borrar de Storage)
     mostrarConfirmacion(`¿Estás seguro de eliminar "${nombre}"?`, () => {
         eliminarProducto(id);
     });
@@ -430,11 +424,19 @@ window.cancelarEdicion = function() {
 function mostrarMensaje(texto, tipo) {
     const mensaje = document.createElement('div');
     mensaje.textContent = texto;
+    let bgColor = '';
+    switch(tipo) {
+        case 'success': bgColor = '#4caf50'; break;
+        case 'error': bgColor = '#f44336'; break;
+        case 'info': bgColor = '#2196F3'; break;
+        default: bgColor = '#333';
+    }
+
     mensaje.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background-color: ${tipo === 'success' ? '#4caf50' : '#f44336'};
+        background-color: ${bgColor};
         color: white;
         padding: 1rem 1.5rem;
         border-radius: 6px;
@@ -512,6 +514,13 @@ style.textContent = `
     @keyframes slideOut {
         from { transform: translateX(0); opacity: 1; }
         to { transform: translateX(100%); opacity: 0; }
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .fa-spin {
+        animation: spin 1s linear infinite;
     }
     .btn-cancel {
         display: none;

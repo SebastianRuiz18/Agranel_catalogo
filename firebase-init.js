@@ -3,15 +3,16 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { 
     getFirestore, collection, getDocs, doc, setDoc, addDoc, deleteDoc, getDoc, orderBy, query,
-    where // <--- FUNCIÓN NUEVA
+    where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// --- Storage ya NO se importa ---
 
 // Tu configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBRMRsURjYl7tpt3YMmbVpfqQbe6U9_EMM",
   authDomain: "agranel-da89b.firebaseapp.com",
   projectId: "agranel-da89b",
-  storageBucket: "agranel-da89b.firebasestorage.app",
+  storageBucket: "agranel-da89b.firebasestorage.app", // Esto ya no importa
   messagingSenderId: "729825875045",
   appId: "1:729825875045:web:10bbf4dac1f7912390628c",
   measurementId: "G-HQMQXVET8Y"
@@ -23,6 +24,7 @@ const app = initializeApp(firebaseConfig);
 // Exporta los servicios que usaremos en otros archivos
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+// --- Storage ya NO se exporta ---
 
 // Exporta las funciones específicas para que otros scripts las usen
 export {
@@ -39,5 +41,6 @@ export {
   getDoc,
   orderBy,
   query,
-  where // <--- EXPORT NUEVO
+  where,
+  // --- Funciones de Storage ya NO se exportan ---
 };
