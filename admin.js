@@ -13,6 +13,7 @@ const ADMIN_EMAIL = "seruci93@gmail.com";
 
 // Variables globales
 let productoEditando = null;
+let categoriasCache = new Map(); // Cache para tener ID y Nombre
 
 // --- INICIO DE LÓGICA DE AUTENTICACIÓN ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,32 +23,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminPanel = document.getElementById('adminPanel');
     const loginContainer = document.getElementById('loginContainer');
     
-    // Si algún elemento no existe (p.ej. en index.html), no hagas nada
     if (!btnLogin || !adminPanel || !loginContainer) return;
 
     // Escucha cambios en el estado de autenticación
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            // Usuario está logueado
             if (user.email === ADMIN_EMAIL) {
-                // Usuario es EL ADMIN
                 console.log('Admin conectado:', user.displayName);
                 document.body.classList.remove('login-page-body');
                 adminPanel.style.display = 'block';
                 loginContainer.style.display = 'none';
                 
-                // --- INICIALIZACIÓN DEL PANEL ---
-                // 1. Cargar las categorías (esto llenará el dropdown)
-                // 2. Cargar los productos (esto usará las categorías)
+                // Cargar categorías y luego productos
                 cargarYMostrarCategorias(); 
 
             } else {
-                // Usuario logueado, pero no es admin
                 mostrarMensaje('No tienes permisos para acceder a este panel.', 'error');
                 signOut(auth);
             }
         } else {
-            // Usuario no está logueado
             console.log('Usuario desconectado.');
             document.body.classList.add('login-page-body');
             adminPanel.style.display = 'none';
@@ -91,6 +85,7 @@ async function cargarYMostrarCategorias() {
     // Guardar el valor seleccionado (si hay uno) para no perderlo
     const valorPrevio = productCategorySelect.value;
     productCategorySelect.innerHTML = '<option value="">-- Seleccionar Categoría --</option>';
+    categoriasCache.clear(); // Limpiar cache
 
     try {
         const q = query(collection(db, 'categorias'), orderBy('nombre'));
@@ -104,31 +99,46 @@ async function cargarYMostrarCategorias() {
 
         snapshot.forEach(doc => {
             const categoria = doc.data();
-            const categoriaId = doc.id; // El ID del documento
+            const categoriaId = doc.id;
             
-            // 1. Llenar la lista de "Administrar Categorías"
+            // Guardar en cache
+            categoriasCache.set(categoriaId, categoria.nombre);
+            
+            // 1. Llenar la lista de "Administrar Categorías" (CON INPUTS Y BOTONES)
             const item = document.createElement('div');
             item.className = 'category-list-item';
+            item.id = `cat-item-${categoriaId}`; // ID para encontrarlo
             item.innerHTML = `
-                <span>${categoria.nombre}</span>
-                <button class="btn-delete-category" data-id="${categoriaId}" data-nombre="${categoria.nombre}">
+                <input type="text" value="${categoria.nombre}" class="category-input" data-id="${categoriaId}" disabled>
+                
+                <button class="btn-edit-category" data-id="${categoriaId}" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-save-category" data-id="${categoriaId}" title="Guardar" style="display: none;">
+                    <i class="fas fa-save"></i>
+                </button>
+                <button class="btn-delete-category" data-id="${categoriaId}" data-nombre="${categoria.nombre}" title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
             `;
             categoryList.appendChild(item);
             
-            // 2. Llenar el dropdown del formulario de productos
+            // 2. Llenar el dropdown del formulario de productos (CON ID!)
             const option = document.createElement('option');
-            option.value = categoria.nombre; // Guardamos el nombre
-            option.textContent = categoria.nombre;
+            option.value = categoriaId; // <-- Guardamos el ID
+            option.textContent = categoria.nombre; // <-- Mostramos el Nombre
             productCategorySelect.appendChild(option);
         });
 
-        // Añadir event listeners a los botones de borrar
+        // Añadir event listeners a los botones de la lista
+        categoryList.querySelectorAll('.btn-edit-category').forEach(btn => {
+            btn.addEventListener('click', () => habilitarEdicionCategoria(btn.dataset.id));
+        });
+        categoryList.querySelectorAll('.btn-save-category').forEach(btn => {
+            btn.addEventListener('click', () => guardarEdicionCategoria(btn.dataset.id));
+        });
         categoryList.querySelectorAll('.btn-delete-category').forEach(btn => {
-            btn.addEventListener('click', () => {
-                confirmarEliminarCategoria(btn.dataset.id, btn.dataset.nombre);
-            });
+            btn.addEventListener('click', () => confirmarEliminarCategoria(btn.dataset.id, btn.dataset.nombre));
         });
 
         // Restaurar el valor previo del select
@@ -150,34 +160,84 @@ async function guardarNuevaCategoria(e) {
     
     if (!nombreCategoria) return;
 
-    // (Opcional) Revisar si ya existe
-    // ...
-
     try {
         await addDoc(collection(db, 'categorias'), {
             nombre: nombreCategoria
         });
         mostrarMensaje('Categoría agregada', 'success');
         input.value = '';
-        cargarYMostrarCategorias(); // Recargar la lista y el dropdown
+        cargarYMostrarCategorias(); // Recargar todo
     } catch (error) {
         console.error("Error guardando categoría:", error);
         mostrarMensaje('Error al guardar categoría', 'error');
     }
 }
 
-function confirmarEliminarCategoria(id, nombre) {
-    // Advertencia: Esto no borra los productos de la categoría.
-    mostrarConfirmacion(`¿Eliminar la categoría "${nombre}"? (Esto no eliminará los productos que ya la usen)`, () => {
-        eliminarCategoria(id);
-    });
+// --- NUEVAS FUNCIONES DE EDICIÓN ---
+function habilitarEdicionCategoria(id) {
+    const item = document.getElementById(`cat-item-${id}`);
+    const input = item.querySelector('.category-input');
+    
+    input.disabled = false;
+    input.focus();
+    
+    item.querySelector('.btn-edit-category').style.display = 'none';
+    item.querySelector('.btn-delete-category').style.display = 'none';
+    item.querySelector('.btn-save-category').style.display = 'inline-flex';
+}
+
+async function guardarEdicionCategoria(id) {
+    const item = document.getElementById(`cat-item-${id}`);
+    const input = item.querySelector('.category-input');
+    const nuevoNombre = input.value.trim();
+    
+    if (!nuevoNombre) {
+        mostrarMensaje('El nombre no puede estar vacío', 'error');
+        return;
+    }
+
+    try {
+        const docRef = doc(db, 'categorias', id);
+        await setDoc(docRef, { nombre: nuevoNombre }); // setDoc actualiza o sobrescribe
+        
+        mostrarMensaje('Categoría actualizada', 'success');
+        
+        // Recargar todo para que se actualice el dropdown
+        cargarYMostrarCategorias();
+
+    } catch (error) {
+        console.error("Error actualizando categoría:", error);
+        mostrarMensaje('Error al actualizar', 'error');
+    }
+}
+
+// --- BORRADO MÁS SEGURO ---
+async function confirmarEliminarCategoria(id, nombre) {
+    // Paso 1: Revisar si hay productos usando esta categoría
+    try {
+        const q = query(collection(db, 'productos'), where("categoriaId", "==", id));
+        const snapshot = await getDocs(q);
+        
+        if (!snapshot.empty) {
+            // Si hay productos, NO DEJAR BORRAR
+            mostrarMensaje(`Error: No se puede borrar "${nombre}". Hay ${snapshot.size} productos usándola.`, 'error');
+        } else {
+            // Si está vacía, preguntar
+            mostrarConfirmacion(`¿Seguro que quieres eliminar "${nombre}"?`, () => {
+                eliminarCategoria(id);
+            });
+        }
+    } catch (error) {
+        console.error("Error al verificar productos:", error);
+        mostrarMensaje('Error al verificar productos', 'error');
+    }
 }
 
 async function eliminarCategoria(id) {
     try {
         await deleteDoc(doc(db, 'categorias', id));
         mostrarMensaje('Categoría eliminada', 'success');
-        cargarYMostrarCategorias(); // Recargar la lista y el dropdown
+        cargarYMostrarCategorias(); // Recargar todo
     } catch (error) {
         console.error("Error eliminando categoría:", error);
         mostrarMensaje('Error al eliminar categoría', 'error');
@@ -186,7 +246,7 @@ async function eliminarCategoria(id) {
 
 
 // ======================================================
-// === SECCIÓN: ADMINISTRACIÓN DE PRODUCTOS (MODIFICADA) ===
+// === SECCIÓN: ADMINISTRACIÓN DE PRODUCTOS (REFACTORIZADO) ===
 // ======================================================
 
 // Cargar productos en el panel admin
@@ -209,10 +269,12 @@ async function cargarProductosAdmin() {
             const producto = doc.data();
             producto.id = doc.id;
             
+            // Usar el cache para obtener el nombre de la categoría
+            const nombreCategoria = categoriasCache.get(producto.categoriaId) || 'Sin Categoría';
+            
             const item = document.createElement('div');
             item.className = 'admin-product-item';
             
-            // Añadimos la categoría a la vista de admin
             item.innerHTML = `
                 <img src="${producto.imagen}" 
                      alt="${producto.nombre}" 
@@ -220,7 +282,7 @@ async function cargarProductosAdmin() {
                      onerror="this.src='https://via.placeholder.com/120x100?text=Sin+Imagen'">
                 <div class="admin-product-info">
                     <h4>${producto.nombre}</h4>
-                    <p class="admin-product-category">${producto.categoria || 'Sin categoría'}</p>
+                    <p class="admin-product-category">${nombreCategoria}</p>
                     <div class="admin-product-price">${producto.precio}</div>
                 </div>
                 <div class="admin-product-actions">
@@ -253,17 +315,17 @@ async function cargarProductosAdmin() {
 async function manejarSubmitFormulario(e) {
     e.preventDefault();
     
-    // Objeto producto AHORA INCLUYE 'categoria'
+    // Objeto producto AHORA USA 'categoriaId'
     const producto = {
-        categoria: document.getElementById('productCategory').value.trim(),
+        categoriaId: document.getElementById('productCategory').value.trim(),
         nombre: document.getElementById('productName').value.trim(),
         descripcion: document.getElementById('productDescription').value.trim(),
         precio: document.getElementById('productPrice').value.trim(),
         imagen: document.getElementById('productImage').value.trim()
     };
     
-    // Validación (AHORA INCLUYE 'categoria')
-    if (!producto.categoria) {
+    // Validación (AHORA USA 'categoriaId')
+    if (!producto.categoriaId) {
         mostrarMensaje('Por favor, selecciona una categoría.', 'error');
         return;
     }
@@ -309,7 +371,7 @@ async function editarProducto(id) {
         productoEditando = id;
         
         // Llenar el formulario con los datos del producto
-        document.getElementById('productCategory').value = producto.categoria; // <--- CAMPO NUEVO
+        document.getElementById('productCategory').value = producto.categoriaId; // <-- CAMPO USA ID
         document.getElementById('productName').value = producto.nombre;
         document.getElementById('productDescription').value = producto.descripcion;
         document.getElementById('productPrice').value = producto.precio;

@@ -8,7 +8,7 @@ import { db, collection, getDocs, query, orderBy, where } from './firebase-init.
 // Debe incluir el código de país (ej: 521XXXXXXXXXX para México).
 // ¡SIN el símbolo '+' ni espacios ni guiones!
 //
-const WHATSAPP_NUMBER = "5216641122626";
+const WHATSAPP_NUMBER = "TU_NUMERO_AQUI_CON_CODIGO_DE_PAIS";
 //
 // ------------------------------------
 
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarCategoriasYFiltros();
     
     // 2. Cargar TODOS los productos al inicio
-    cargarProductosDesdeFirebase(null); // 'null' o 'undefined' significa "Todos"
+    cargarProductosDesdeFirebase(null); // 'null' significa "Todos"
 
     // Lógica del menú hamburguesa
     const navToggle = document.querySelector('.nav-toggle');
@@ -57,12 +57,14 @@ async function cargarCategoriasYFiltros() {
         // Crear un botón por cada categoría
         snapshot.forEach(doc => {
             const categoria = doc.data();
+            const categoriaId = doc.id; // <-- OBTENER EL ID
+            
             const btn = document.createElement('button');
             btn.className = 'filter-button';
             btn.textContent = categoria.nombre;
             btn.onclick = () => {
-                // Cargar productos filtrados
-                cargarProductosDesdeFirebase(categoria.nombre);
+                // Cargar productos filtrados por ID
+                cargarProductosDesdeFirebase(categoriaId); // <-- PASAR EL ID
                 // Manejar clase activa
                 document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
@@ -77,8 +79,8 @@ async function cargarCategoriasYFiltros() {
 }
 
 
-// FUNCIÓN MODIFICADA para cargar productos (ahora acepta un filtro)
-async function cargarProductosDesdeFirebase(filtroCategoria) {
+// FUNCIÓN MODIFICADA para cargar productos (ahora filtra por categoriaId)
+async function cargarProductosDesdeFirebase(filtroCategoriaId) {
     const listaProductos = document.getElementById('products-list');
     if (!listaProductos) return;
 
@@ -92,12 +94,12 @@ async function cargarProductosDesdeFirebase(filtroCategoria) {
     listaProductos.innerHTML = '<p class="loader">Cargando productos...</p>';
 
     try {
-        // --- LÓGICA DE FILTRADO ---
+        // --- LÓGICA DE FILTRADO (AHORA USA categoriaId) ---
         let q;
-        if (filtroCategoria) {
+        if (filtroCategoriaId) {
             // Si hay un filtro, crea una consulta con 'where'
             q = query(collection(db, 'productos'), 
-                      where("categoria", "==", filtroCategoria), 
+                      where("categoriaId", "==", filtroCategoriaId), // <-- CAMBIO
                       orderBy('nombre'));
         } else {
             // Si no hay filtro, trae todos
@@ -147,6 +149,11 @@ async function cargarProductosDesdeFirebase(filtroCategoria) {
 
     } catch (error) {
         console.error("Error cargando productos:", error);
-        listaProductos.innerHTML = '<p class="loader">No se pudieron cargar los productos. Intenta de nuevo más tarde.</p>';
+        // Este es el error que probablemente ves por el índice:
+        if (error.code === 'failed-precondition') {
+            listaProductos.innerHTML = '<p class="loader">Error: La base de datos necesita un índice. Abre F12 y sigue las instrucciones del error en la consola.</p>';
+        } else {
+            listaProductos.innerHTML = '<p class="loader">No se pudieron cargar los productos. Intenta de nuevo más tarde.</p>';
+        }
     }
 }

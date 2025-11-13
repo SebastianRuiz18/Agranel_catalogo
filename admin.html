@@ -41,7 +41,7 @@
                 <h2>Administrar Catálogo</h2>
             </div>
 
-            <!-- NUEVA ESTRUCTURA DE 3 COLUMNAS -->
+            <!-- ESTRUCTURA DE 3 COLUMNAS -->
             <div class="admin-grid-layout">
                 
                 <!-- Columna 1: Formulario de Producto -->
@@ -51,9 +51,9 @@
                         
                         <div class="form-group">
                             <label for="productCategory">Categoría</label>
+                            <!-- Este 'select' ahora usará IDs de categoría -->
                             <select id="productCategory" required>
                                 <option value="">-- Seleccionar Categoría --</option>
-                                <!-- Las categorías se cargarán aquí con JS -->
                             </select>
                         </div>
 
@@ -110,7 +110,7 @@
                         </div>
                     </form>
                     <div id="categoryList" class="category-list">
-                        <!-- Lista de categorías se cargará aquí -->
+                        <!-- Lista de categorías (AHORA EDITABLE) se cargará aquí -->
                     </div>
                 </div>
 

@@ -589,7 +589,7 @@ footer {
     font-size: 1.2rem;
 }
 
-/* --- NUEVO: Filtros de Categoría (index.html) --- */
+/* --- Filtros de Categoría (index.html) --- */
 .category-filters {
     display: flex;
     flex-wrap: wrap;
@@ -619,7 +619,7 @@ footer {
     color: var(--text-light);
 }
 
-/* --- NUEVO: Retícula de Admin (admin.html) --- */
+/* --- Retícula de Admin (admin.html) --- */
 .admin-grid-layout {
     display: grid;
     grid-template-columns: 1fr 1.2fr 0.8fr; /* 3 columnas */
@@ -636,14 +636,14 @@ footer {
     text-align: center;
 }
 
-/* --- NUEVO: Admin Categorías (admin.html) --- */
+/* --- Admin Categorías (admin.html) --- */
 .admin-categories-container {
     background-color: var(--card-background);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 15px var(--shadow-color);
-    position: sticky; /* Para que se quede fijo al scrollear */
-    top: 120px; /* Abajo del header */
+    position: sticky;
+    top: 120px; 
 }
 
 .category-form label {
@@ -695,20 +695,49 @@ footer {
     background-color: var(--background-color);
     padding: 0.75rem 1rem;
     border-radius: 6px;
+    gap: 0.5rem; /* Añadido */
 }
-.category-list-item span {
+/* --- NUEVOS ESTILOS PARA EDICIÓN DE CATEGORÍA --- */
+.category-list-item input[type="text"] {
+    flex-grow: 1;
+    border: 1px solid transparent; /* Se ve como texto */
+    background: transparent;
+    padding: 0.25rem;
     font-weight: 500;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    width: 100%; /* Para que ocupe el espacio */
 }
+.category-list-item input[type="text"]:disabled {
+    color: var(--text-dark); /* Color normal de texto */
+    cursor: default;
+}
+.category-list-item input[type="text"]:not(:disabled) {
+    border-color: #ccc; /* Borde visible al editar */
+    background-color: white;
+}
+.btn-edit-category, .btn-save-category {
+    background: none; border: none; cursor: pointer;
+    font-size: 1rem; /* Aumentado */
+    padding: 0.25rem;
+    flex-shrink: 0; /* Para que no se encoja */
+}
+.btn-edit-category { color: #f0ad4e; }
+.btn-save-category { color: var(--accent-color); }
+.btn-edit-category:hover { color: #ec971f; }
+.btn-save-category:hover { color: #5a7044; }
+
 .btn-delete-category {
     background: none;
     border: none;
     color: #d9534f;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 1rem; /* Aumentado */
+    padding: 0.25rem;
+    flex-shrink: 0;
 }
-.btn-delete-category:hover {
-    color: #c9302c;
-}
+/* ----------------------------------------------- */
+
 .admin-product-category {
     font-style: italic;
     color: var(--primary-color);
@@ -720,7 +749,6 @@ footer {
 /* --- Responsive para la nueva retícula --- */
 @media (max-width: 1200px) {
     .admin-grid-layout {
-        /* Pasa a 2 columnas: Formulario y Lista (categorías abajo) */
         grid-template-columns: 1fr 1fr;
         grid-template-areas: 
             "form list"
@@ -731,12 +759,11 @@ footer {
     .admin-categories-container { 
         grid-area: categories; 
         max-width: 600px;
-        margin: 0 auto; /* Centrarlo */
+        margin: 0 auto; 
     }
 }
 @media (max-width: 900px) {
     .admin-grid-layout {
-        /* Pasa a 1 columna */
         grid-template-columns: 1fr;
         grid-template-areas: 
             "form"
@@ -747,7 +774,7 @@ footer {
         margin: 0;
         max-width: none;
         width: 100%;
-        position: static; /* Quitar sticky */
+        position: static;
         margin-bottom: 2rem;
     }
     .admin-products-list-wrapper {
