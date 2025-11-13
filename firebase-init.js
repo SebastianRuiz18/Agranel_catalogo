@@ -1,7 +1,10 @@
 // Importa las funciones que necesitas
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, setDoc, addDoc, deleteDoc, getDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { 
+    getFirestore, collection, getDocs, doc, setDoc, addDoc, deleteDoc, getDoc, orderBy, query,
+    where // <--- FUNCIÓN NUEVA
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // Tu configuración de Firebase
 const firebaseConfig = {
@@ -35,5 +38,6 @@ export {
   deleteDoc,
   getDoc,
   orderBy,
-  query
+  query,
+  where // <--- EXPORT NUEVO
 };

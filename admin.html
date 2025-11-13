@@ -8,8 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
-<!-- La clase 'login-page-body' se añadirá/quitará con JS -->
-<body>
+<body class="login-page-body">
     
     <!-- Contenedor de Login (Visible por defecto) -->
     <div id="loginContainer" class="login-container" style="display: none;">
@@ -24,7 +23,6 @@
     <!-- Panel de Admin (Oculto por defecto) -->
     <div id="adminPanel" style="display: none;">
         
-        <!-- El header (tu diseño original) ahora está DENTRO del panel -->
         <header>
             <div class="logo-container">
                 <img src="img/agranellogo.png" alt="Agranel Logo" class="logo">
@@ -40,58 +38,88 @@
 
         <main class="admin-container">
             <div class="admin-header">
-                <h2>Administrar Productos</h2>
+                <h2>Administrar Catálogo</h2>
             </div>
 
-            <!-- Formulario de Producto -->
-            <div class="admin-form-container">
-                <h3 id="formTitle">Agregar Nuevo Producto</h3>
-                <form id="productForm" class="product-form">
-                    
-                    <div class="form-group">
-                        <label for="productName">Nombre del Producto</label>
-                        <input type="text" id="productName" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="productDescription">Descripción</label>
-                        <textarea id="productDescription" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-group-inline">
+            <!-- NUEVA ESTRUCTURA DE 3 COLUMNAS -->
+            <div class="admin-grid-layout">
+                
+                <!-- Columna 1: Formulario de Producto -->
+                <div class="admin-form-container" id="productFormContainer">
+                    <h3 id="formTitle">Agregar Nuevo Producto</h3>
+                    <form id="productForm" class="product-form">
+                        
                         <div class="form-group">
-                            <label for="productPrice">Precio</label>
-                            <input type="text" id="productPrice" placeholder="Ej: $99.00" required>
+                            <label for="productCategory">Categoría</label>
+                            <select id="productCategory" required>
+                                <option value="">-- Seleccionar Categoría --</option>
+                                <!-- Las categorías se cargarán aquí con JS -->
+                            </select>
                         </div>
+
                         <div class="form-group">
-                            <label for="productImage">URL de la Imagen</label>
-                            <input type="url" id="productImage" placeholder="https://i.imgur.com/..." required>
+                            <label for="productName">Nombre del Producto</label>
+                            <input type="text" id="productName" required>
                         </div>
-                    </div>
+                        
+                        <div class="form-group">
+                            <label for="productDescription">Descripción</label>
+                            <textarea id="productDescription" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-group-inline">
+                            <div class="form-group">
+                                <label for="productPrice">Precio</label>
+                                <input type="text" id="productPrice" placeholder="Ej: $99.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="productImage">URL de la Imagen</label>
+                                <input type="url" id="productImage" placeholder="https://i.imgur.com/..." required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Producto
+                            </button>
+                            <button type="button" class="btn btn-cancel" onclick="cancelarEdicion()">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-                    <!-- CAMPO DE WHATSAPP ELIMINADO -->
-                    
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Guardar Producto
-                        </button>
-                        <button type="button" class="btn btn-cancel" onclick="cancelarEdicion()">
-                            Cancelar
-                        </button>
+                <!-- Columna 2: Lista de Productos -->
+                <div class="admin-products-list-wrapper">
+                    <h3>Productos Actuales</h3>
+                    <div class="admin-products-list" id="adminProductsList">
+                        <!-- Los productos se cargarán aquí -->
                     </div>
-                </form>
-            </div>
+                </div>
 
-            <!-- Lista de Productos -->
-            <div class="admin-products-list" id="adminProductsList">
-                <!-- Los productos se cargarán aquí -->
-            </div>
+                <!-- Columna 3: Administrar Categorías -->
+                <div class="admin-categories-container">
+                    <h3>Administrar Categorías</h3>
+                    <form id="categoryForm" class="category-form">
+                        <label for="categoryName">Nueva Categoría</label>
+                        <div class="form-group-inline">
+                            <input type="text" id="categoryName" placeholder="Ej: Navidad" required>
+                            <button type="submit" class="btn-add-category">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div id="categoryList" class="category-list">
+                        <!-- Lista de categorías se cargará aquí -->
+                    </div>
+                </div>
+
+            </div> <!-- Fin de .admin-grid-layout -->
 
         </main> <!-- Fin de .admin-container -->
 
     </div> <!-- Fin de #adminPanel -->
 
-    <!-- Carga los scripts como módulos -->
     <script src="admin.js" type="module"></script>
 </body>
 </html>

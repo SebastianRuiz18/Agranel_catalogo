@@ -2,7 +2,8 @@
 import { 
     auth, db, 
     GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut,
-    collection, getDocs, doc, setDoc, addDoc, deleteDoc, getDoc, orderBy, query
+    collection, getDocs, doc, setDoc, addDoc, deleteDoc, getDoc, orderBy, query,
+    where // <--- Función 'where' importada
 } from './firebase-init.js';
 
 // --- ATENCIÓN ---
@@ -31,20 +32,24 @@ document.addEventListener('DOMContentLoaded', () => {
             if (user.email === ADMIN_EMAIL) {
                 // Usuario es EL ADMIN
                 console.log('Admin conectado:', user.displayName);
-                document.body.classList.remove('login-page-body'); // Quita fondo centrado
+                document.body.classList.remove('login-page-body');
                 adminPanel.style.display = 'block';
                 loginContainer.style.display = 'none';
-                // Ahora que sabemos que es admin, cargamos los productos
-                cargarProductosAdmin();
+                
+                // --- INICIALIZACIÓN DEL PANEL ---
+                // 1. Cargar las categorías (esto llenará el dropdown)
+                // 2. Cargar los productos (esto usará las categorías)
+                cargarYMostrarCategorias(); 
+
             } else {
                 // Usuario logueado, pero no es admin
                 mostrarMensaje('No tienes permisos para acceder a este panel.', 'error');
-                signOut(auth); // Lo desconectamos
+                signOut(auth);
             }
         } else {
             // Usuario no está logueado
             console.log('Usuario desconectado.');
-            document.body.classList.add('login-page-body'); // Pone fondo centrado
+            document.body.classList.add('login-page-body');
             adminPanel.style.display = 'none';
             loginContainer.style.display = 'block';
         }
@@ -64,13 +69,127 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Manejador del formulario
+    // Manejador del formulario de PRODUCTO
     document.getElementById('productForm').addEventListener('submit', manejarSubmitFormulario);
+    
+    // Manejador del formulario de CATEGORÍA
+    document.getElementById('categoryForm').addEventListener('submit', guardarNuevaCategoria);
 });
 // --- FIN DE LÓGICA DE AUTENTICACIÓN ---
 
 
-// Cargar productos en el panel admin (VERSIÓN FIREBASE)
+// ======================================================
+// === NUEVA SECCIÓN: ADMINISTRACIÓN DE CATEGORÍAS ===
+// ======================================================
+
+async function cargarYMostrarCategorias() {
+    const categoryList = document.getElementById('categoryList');
+    const productCategorySelect = document.getElementById('productCategory');
+    
+    categoryList.innerHTML = '<p>Cargando...</p>';
+    
+    // Guardar el valor seleccionado (si hay uno) para no perderlo
+    const valorPrevio = productCategorySelect.value;
+    productCategorySelect.innerHTML = '<option value="">-- Seleccionar Categoría --</option>';
+
+    try {
+        const q = query(collection(db, 'categorias'), orderBy('nombre'));
+        const snapshot = await getDocs(q);
+        
+        categoryList.innerHTML = ''; // Limpiar
+        
+        if (snapshot.empty) {
+            categoryList.innerHTML = '<p>No hay categorías.</p>';
+        }
+
+        snapshot.forEach(doc => {
+            const categoria = doc.data();
+            const categoriaId = doc.id; // El ID del documento
+            
+            // 1. Llenar la lista de "Administrar Categorías"
+            const item = document.createElement('div');
+            item.className = 'category-list-item';
+            item.innerHTML = `
+                <span>${categoria.nombre}</span>
+                <button class="btn-delete-category" data-id="${categoriaId}" data-nombre="${categoria.nombre}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            categoryList.appendChild(item);
+            
+            // 2. Llenar el dropdown del formulario de productos
+            const option = document.createElement('option');
+            option.value = categoria.nombre; // Guardamos el nombre
+            option.textContent = categoria.nombre;
+            productCategorySelect.appendChild(option);
+        });
+
+        // Añadir event listeners a los botones de borrar
+        categoryList.querySelectorAll('.btn-delete-category').forEach(btn => {
+            btn.addEventListener('click', () => {
+                confirmarEliminarCategoria(btn.dataset.id, btn.dataset.nombre);
+            });
+        });
+
+        // Restaurar el valor previo del select
+        productCategorySelect.value = valorPrevio;
+
+        // AHORA QUE TENEMOS LAS CATEGORÍAS, CARGAMOS LOS PRODUCTOS
+        cargarProductosAdmin();
+
+    } catch (error) {
+        console.error("Error al cargar categorías:", error);
+        mostrarMensaje('Error al cargar categorías', 'error');
+    }
+}
+
+async function guardarNuevaCategoria(e) {
+    e.preventDefault();
+    const input = document.getElementById('categoryName');
+    const nombreCategoria = input.value.trim();
+    
+    if (!nombreCategoria) return;
+
+    // (Opcional) Revisar si ya existe
+    // ...
+
+    try {
+        await addDoc(collection(db, 'categorias'), {
+            nombre: nombreCategoria
+        });
+        mostrarMensaje('Categoría agregada', 'success');
+        input.value = '';
+        cargarYMostrarCategorias(); // Recargar la lista y el dropdown
+    } catch (error) {
+        console.error("Error guardando categoría:", error);
+        mostrarMensaje('Error al guardar categoría', 'error');
+    }
+}
+
+function confirmarEliminarCategoria(id, nombre) {
+    // Advertencia: Esto no borra los productos de la categoría.
+    mostrarConfirmacion(`¿Eliminar la categoría "${nombre}"? (Esto no eliminará los productos que ya la usen)`, () => {
+        eliminarCategoria(id);
+    });
+}
+
+async function eliminarCategoria(id) {
+    try {
+        await deleteDoc(doc(db, 'categorias', id));
+        mostrarMensaje('Categoría eliminada', 'success');
+        cargarYMostrarCategorias(); // Recargar la lista y el dropdown
+    } catch (error) {
+        console.error("Error eliminando categoría:", error);
+        mostrarMensaje('Error al eliminar categoría', 'error');
+    }
+}
+
+
+// ======================================================
+// === SECCIÓN: ADMINISTRACIÓN DE PRODUCTOS (MODIFICADA) ===
+// ======================================================
+
+// Cargar productos en el panel admin
 async function cargarProductosAdmin() {
     const lista = document.getElementById('adminProductsList');
     lista.innerHTML = '<p style="text-align: center; color: var(--text-dark); padding: 2rem;">Cargando productos...</p>';
@@ -79,10 +198,10 @@ async function cargarProductosAdmin() {
         const q = query(collection(db, 'productos'), orderBy('nombre'));
         const snapshot = await getDocs(q);
         
-        lista.innerHTML = ''; // Limpiar "Cargando..."
+        lista.innerHTML = '';
         
         if (snapshot.empty) {
-            lista.innerHTML = '<p style="text-align: center; color: var(--text-dark); padding: 2rem;">No hay productos. Agrega el primero!</p>';
+            lista.innerHTML = '<p style="text-align: center; color: var(--text-dark); padding: 2rem;">No hay productos.</p>';
             return;
         }
         
@@ -93,6 +212,7 @@ async function cargarProductosAdmin() {
             const item = document.createElement('div');
             item.className = 'admin-product-item';
             
+            // Añadimos la categoría a la vista de admin
             item.innerHTML = `
                 <img src="${producto.imagen}" 
                      alt="${producto.nombre}" 
@@ -100,7 +220,7 @@ async function cargarProductosAdmin() {
                      onerror="this.src='https://via.placeholder.com/120x100?text=Sin+Imagen'">
                 <div class="admin-product-info">
                     <h4>${producto.nombre}</h4>
-                    <p>${producto.descripcion}</p>
+                    <p class="admin-product-category">${producto.categoria || 'Sin categoría'}</p>
                     <div class="admin-product-price">${producto.precio}</div>
                 </div>
                 <div class="admin-product-actions">
@@ -115,7 +235,7 @@ async function cargarProductosAdmin() {
             lista.appendChild(item);
         });
 
-        // Añadir event listeners a los botones creados
+        // Añadir event listeners a los botones
         lista.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', () => editarProducto(btn.dataset.id));
         });
@@ -129,19 +249,24 @@ async function cargarProductosAdmin() {
     }
 }
 
-// Manejar el envío del formulario (VERSIÓN FIREBASE)
+// Manejar el envío del formulario
 async function manejarSubmitFormulario(e) {
     e.preventDefault();
     
-    // Objeto producto ya no incluye 'whatsapp'
+    // Objeto producto AHORA INCLUYE 'categoria'
     const producto = {
+        categoria: document.getElementById('productCategory').value.trim(),
         nombre: document.getElementById('productName').value.trim(),
         descripcion: document.getElementById('productDescription').value.trim(),
         precio: document.getElementById('productPrice').value.trim(),
         imagen: document.getElementById('productImage').value.trim()
     };
     
-    // Validación (ya no incluye 'whatsapp')
+    // Validación (AHORA INCLUYE 'categoria')
+    if (!producto.categoria) {
+        mostrarMensaje('Por favor, selecciona una categoría.', 'error');
+        return;
+    }
     if (!producto.nombre || !producto.precio || !producto.imagen) {
         mostrarMensaje('Por favor, completa nombre, precio e imagen.', 'error');
         return;
@@ -149,17 +274,17 @@ async function manejarSubmitFormulario(e) {
 
     try {
         if (productoEditando) {
-            // Actualizar producto existente
+            // Actualizar
             const docRef = doc(db, 'productos', productoEditando);
             await setDoc(docRef, producto);
             mostrarMensaje('Producto actualizado correctamente', 'success');
         } else {
-            // Agregar nuevo producto
+            // Agregar
             await addDoc(collection(db, 'productos'), producto);
             mostrarMensaje('Producto agregado correctamente', 'success');
         }
         
-        cargarProductosAdmin();
+        cargarProductosAdmin(); // Recargar lista de productos
         limpiarFormulario();
 
     } catch (error) {
@@ -168,7 +293,7 @@ async function manejarSubmitFormulario(e) {
     }
 }
 
-// Editar producto (VERSIÓN FIREBASE)
+// Editar producto
 async function editarProducto(id) {
     try {
         const docRef = doc(db, 'productos', id);
@@ -183,16 +308,17 @@ async function editarProducto(id) {
         
         productoEditando = id;
         
+        // Llenar el formulario con los datos del producto
+        document.getElementById('productCategory').value = producto.categoria; // <--- CAMPO NUEVO
         document.getElementById('productName').value = producto.nombre;
         document.getElementById('productDescription').value = producto.descripcion;
         document.getElementById('productPrice').value = producto.precio;
         document.getElementById('productImage').value = producto.imagen;
-        // document.getElementById('productWhatsapp').value = producto.whatsapp; // ELIMINADO
         
         document.getElementById('formTitle').textContent = 'Editar Producto';
         document.querySelector('.btn-cancel').style.display = 'inline-flex';
         
-        document.querySelector('.admin-form-container').scrollIntoView({ 
+        document.getElementById('productFormContainer').scrollIntoView({ 
             behavior: 'smooth', 
             block: 'start' 
         });
@@ -203,15 +329,25 @@ async function editarProducto(id) {
     }
 }
 
-// Confirmar eliminación
+// Limpiar formulario
+function limpiarFormulario() {
+    productoEditando = null;
+    document.getElementById('productForm').reset();
+    document.getElementById('formTitle').textContent = 'Agregar Nuevo Producto';
+    document.querySelector('.btn-cancel').style.display = 'none';
+}
+
+
+// --- FUNCIONES DE UTILIDAD (SIN CAMBIOS) ---
+
+// Confirmar eliminación de PRODUCTO
 function confirmarEliminar(id, nombre) {
-    // Usamos un modal personalizado en lugar de confirm()
     mostrarConfirmacion(`¿Estás seguro de eliminar "${nombre}"?`, () => {
         eliminarProducto(id);
     });
 }
 
-// Eliminar producto (VERSIÓN FIREBASE)
+// Eliminar producto
 async function eliminarProducto(id) {
     try {
         await deleteDoc(doc(db, 'productos', id));
@@ -226,14 +362,6 @@ async function eliminarProducto(id) {
 // Cancelar edición (expuesto globalmente)
 window.cancelarEdicion = function() {
     limpiarFormulario();
-}
-
-// Limpiar formulario
-function limpiarFormulario() {
-    productoEditando = null;
-    document.getElementById('productForm').reset();
-    document.getElementById('formTitle').textContent = 'Agregar Nuevo Producto';
-    document.querySelector('.btn-cancel').style.display = 'none';
 }
 
 // Mostrar mensaje temporal
@@ -262,7 +390,7 @@ function mostrarMensaje(texto, tipo) {
     }, 3000);
 }
 
-// Mostrar modal de confirmación (reemplazo de confirm())
+// Mostrar modal de confirmación
 function mostrarConfirmacion(texto, onConfirm) {
     const overlay = document.createElement('div');
     overlay.style.cssText = `
@@ -286,13 +414,13 @@ function mostrarConfirmacion(texto, onConfirm) {
     actions.style.cssText = 'display: flex; gap: 1rem; justify-content: center;';
     
     const btnConfirm = document.createElement('button');
-    btnConfirm.textContent = 'Eliminar';
-    btnConfirm.className = 'btn-delete'; // Reusa tu clase de botón
+    btnConfirm.textContent = 'Confirmar'; // Texto genérico
+    btnConfirm.className = 'btn-delete';
     btnConfirm.style.cssText = 'background-color: #d9534f; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: var(--font-body); font-size: 0.9rem;';
     
     const btnCancel = document.createElement('button');
     btnCancel.textContent = 'Cancelar';
-    btnCancel.className = 'btn-cancel'; // Reusa tu clase de botón
+    btnCancel.className = 'btn-cancel';
     btnCancel.style.cssText = 'background-color: #999; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: var(--font-body); font-size: 0.9rem;';
     
     btnConfirm.onclick = () => {
@@ -312,7 +440,7 @@ function mostrarConfirmacion(texto, onConfirm) {
     document.body.appendChild(overlay);
 }
 
-// Agregar animaciones CSS (si no están en styles.css)
+// Agregar animaciones CSS
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
@@ -324,10 +452,10 @@ style.textContent = `
         to { transform: translateX(100%); opacity: 0; }
     }
     .btn-cancel {
-        display: none; /* Oculta el de cancelar por defecto */
+        display: none;
     }
     .form-actions .btn-cancel {
-        display: inline-flex; /* Muestra el del formulario */
+        display: inline-flex;
     }
 `;
 document.head.appendChild(style);

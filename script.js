@@ -1,5 +1,5 @@
-// Importa solo la 'db' y las funciones de firestore que necesitamos
-import { db, collection, getDocs, query, orderBy } from './firebase-init.js';
+// Importa las funciones de firestore que necesitamos
+import { db, collection, getDocs, query, orderBy, where } from './firebase-init.js';
 
 // --- NÚMERO DE WHATSAPP DEL NEGOCIO ---
 //
@@ -15,10 +15,13 @@ const WHATSAPP_NUMBER = "5216641122626";
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Inicia la carga de productos desde Firebase
-    cargarProductosDesdeFirebase();
+    // 1. Cargar las categorías (esto crea los botones de filtro)
+    cargarCategoriasYFiltros();
+    
+    // 2. Cargar TODOS los productos al inicio
+    cargarProductosDesdeFirebase(null); // 'null' o 'undefined' significa "Todos"
 
-    // Lógica del menú hamburguesa (igual que antes)
+    // Lógica del menú hamburguesa
     const navToggle = document.querySelector('.nav-toggle');
     const mainNav = document.querySelector('.main-nav');
 
@@ -29,11 +32,55 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// NUEVA FUNCIÓN para crear los filtros
+async function cargarCategoriasYFiltros() {
+    const filtersContainer = document.getElementById('category-filters');
+    if (!filtersContainer) return;
 
-// Nueva función para cargar desde Firebase
-async function cargarProductosDesdeFirebase() {
+    try {
+        const q = query(collection(db, 'categorias'), orderBy('nombre'));
+        const snapshot = await getDocs(q);
+        
+        // Botón "Todos" por defecto
+        const btnTodos = document.createElement('button');
+        btnTodos.className = 'filter-button active';
+        btnTodos.textContent = 'Todos';
+        btnTodos.onclick = () => {
+            // Cargar productos sin filtro
+            cargarProductosDesdeFirebase(null);
+            // Manejar clase activa
+            document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
+            btnTodos.classList.add('active');
+        };
+        filtersContainer.appendChild(btnTodos);
+
+        // Crear un botón por cada categoría
+        snapshot.forEach(doc => {
+            const categoria = doc.data();
+            const btn = document.createElement('button');
+            btn.className = 'filter-button';
+            btn.textContent = categoria.nombre;
+            btn.onclick = () => {
+                // Cargar productos filtrados
+                cargarProductosDesdeFirebase(categoria.nombre);
+                // Manejar clase activa
+                document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            };
+            filtersContainer.appendChild(btn);
+        });
+
+    } catch (error) {
+        console.error("Error cargando categorías:", error);
+        filtersContainer.innerHTML = '<p>No se pudieron cargar las categorías.</p>';
+    }
+}
+
+
+// FUNCIÓN MODIFICADA para cargar productos (ahora acepta un filtro)
+async function cargarProductosDesdeFirebase(filtroCategoria) {
     const listaProductos = document.getElementById('products-list');
-    if (!listaProductos) return; // Salir si no estamos en index.html
+    if (!listaProductos) return;
 
     // Validar que el número de WhatsApp esté puesto
     if (WHATSAPP_NUMBER === "TU_NUMERO_AQUI_CON_CODIGO_DE_PAIS") {
@@ -45,21 +92,33 @@ async function cargarProductosDesdeFirebase() {
     listaProductos.innerHTML = '<p class="loader">Cargando productos...</p>';
 
     try {
-        // Crea una consulta para 'productos' ordenados por 'nombre'
-        const q = query(collection(db, 'productos'), orderBy('nombre'));
+        // --- LÓGICA DE FILTRADO ---
+        let q;
+        if (filtroCategoria) {
+            // Si hay un filtro, crea una consulta con 'where'
+            q = query(collection(db, 'productos'), 
+                      where("categoria", "==", filtroCategoria), 
+                      orderBy('nombre'));
+        } else {
+            // Si no hay filtro, trae todos
+            q = query(collection(db, 'productos'), 
+                      orderBy('nombre'));
+        }
+        // -------------------------
+
         const snapshot = await getDocs(q);
         
         listaProductos.innerHTML = ''; // Limpiar "Cargando..."
 
         if (snapshot.empty) {
-            listaProductos.innerHTML = '<p class="loader">No hay productos disponibles en este momento.</p>';
+            listaProductos.innerHTML = '<p class="loader">No hay productos en esta categoría.</p>';
             return;
         }
 
         // Itera sobre los documentos y crea las tarjetas
         snapshot.forEach(doc => {
             const producto = doc.data();
-            producto.id = doc.id; // El ID de Firestore
+            producto.id = doc.id;
             
             // Construir el link de WhatsApp dinámicamente
             const mensajeWhatsApp = encodeURIComponent(`¡Hola! Me interesa el producto: ${producto.nombre}`);

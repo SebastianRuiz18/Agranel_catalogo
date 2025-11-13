@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo - A granel</title>
+    <title>Catálogo - Agranel</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -18,17 +18,20 @@
             <i class="fas fa-bars"></i>
         </button>
 
-        <!-- NAVEGACIÓN PÚBLICA (SIN ADMIN) -->
         <nav class="main-nav">
             <a href="index.html" class="active">Catálogo</a>
-            <!-- El enlace a Admin se ha eliminado -->
         </nav>
     </header>
 
     <main class="catalog-container">
         <h1>Nuestros Productos</h1>
-        <p class="subtitle">Descubre la frescura y calidad que A granel tiene para ti.</p>
+        <p class="subtitle">Descubre la frescura y calidad que Agranel tiene para ti.</p>
         
+        <!-- NAVEGACIÓN DE CATEGORÍAS -->
+        <div id="category-filters" class="category-filters">
+            <!-- Los filtros se cargarán aquí -->
+        </div>
+
         <div class="products-grid" id="products-list">
             <!-- Los productos se cargarán aquí -->
             <p class="loader">Cargando productos...</p>
@@ -36,14 +39,9 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 A granel. Todos los derechos reservados.</p>
+        <p>&copy; 2026 Agranel. Todos los derechos reservados.</p>
     </footer>
 
-    <!--
-    Carga los scripts como módulos.
-    Tu script.js ya usa 'import', así que DEBE ser type="module".
-    firebase-init.js también es un módulo.
-    -->
     <script src="script.js" type="module"></script>
 
 </body>

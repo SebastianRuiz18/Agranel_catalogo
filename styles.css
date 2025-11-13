@@ -240,7 +240,7 @@ footer {
 /* --- Panel de Administración (admin.html) --- */
 
 .admin-container {
-    max-width: 900px;
+    max-width: 1400px; /* Aumentado para 3 columnas */
     margin: 2rem auto;
     padding: 0 2rem;
 }
@@ -301,6 +301,7 @@ footer {
 
 .product-form input[type="text"],
 .product-form input[type="url"],
+.product-form select, /* <--- AÑADIDO */
 .product-form textarea {
     width: 100%;
     padding: 0.75rem;
@@ -309,9 +310,11 @@ footer {
     font-family: var(--font-body);
     font-size: 1rem;
     transition: border-color 0.3s, box-shadow 0.3s;
+    background-color: #fff; /* Asegurar fondo blanco en select */
 }
 
 .product-form input:focus,
+.product-form select:focus, /* <--- AÑADIDO */
 .product-form textarea:focus {
     outline: none;
     border-color: var(--primary-color);
@@ -524,18 +527,16 @@ footer {
 }
 
 
-/* --- INICIO DE ESTILOS AGREGADOS PARA EL LOGIN --- */
-/* Estos estilos solo se aplican cuando JS lo indica */
+/* --- INICIO DE ESTILOS AGREGADOS (LOGIN Y CATEGORÍAS) --- */
 
+/* --- Estilos Login (Sin cambios) --- */
 .login-page-body {
-    /* Centra el contenedor de login vertical y horizontalmente */
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background-color: var(--secondary-color); /* Fondo crema */
+    background-color: var(--secondary-color);
 }
-
 .login-container {
     background-color: var(--card-background);
     padding: 2.5rem 3rem;
@@ -545,29 +546,24 @@ footer {
     max-width: 400px;
     width: 90%;
 }
-
 .logo-login {
     height: 80px;
     width: auto;
     margin: 0 auto 1rem auto;
 }
-
 .login-container h1 {
-    /* Re-usamos tu fuente h1 pero ajustamos el tamaño */
     font-family: var(--font-heading);
     font-weight: normal;
-    font-size: 2.8rem; /* Ajustado para el modal */
+    font-size: 2.8rem;
     color: var(--primary-color);
     margin-bottom: 0.5rem;
 }
-
 .login-container p {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.2rem;
     color: var(--text-dark);
     margin-bottom: 2rem;
 }
-
 .btn-google {
     background-color: #4285F4;
     color: white;
@@ -592,4 +588,170 @@ footer {
 .btn-google i {
     font-size: 1.2rem;
 }
-/* --- FIN DE ESTILOS AGREGADOS PARA EL LOGIN --- */
+
+/* --- NUEVO: Filtros de Categoría (index.html) --- */
+.category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 3rem;
+}
+.filter-button {
+    font-family: var(--font-body);
+    background-color: transparent;
+    border: 2px solid var(--secondary-color);
+    color: var(--primary-color);
+    padding: 0.6rem 1.25rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.filter-button:hover {
+    background-color: var(--secondary-color);
+    color: var(--text-dark);
+}
+.filter-button.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+/* --- NUEVO: Retícula de Admin (admin.html) --- */
+.admin-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 0.8fr; /* 3 columnas */
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.admin-products-list-wrapper h3,
+.admin-categories-container h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* --- NUEVO: Admin Categorías (admin.html) --- */
+.admin-categories-container {
+    background-color: var(--card-background);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    position: sticky; /* Para que se quede fijo al scrollear */
+    top: 120px; /* Abajo del header */
+}
+
+.category-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #444;
+}
+.category-form .form-group-inline {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.category-form input {
+    flex-grow: 1;
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+}
+.btn-add-category {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.btn-add-category:hover {
+    background-color: #5a7044;
+}
+
+.category-list {
+    margin-top: 1.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.category-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--background-color);
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+}
+.category-list-item span {
+    font-weight: 500;
+}
+.btn-delete-category {
+    background: none;
+    border: none;
+    color: #d9534f;
+    cursor: pointer;
+    font-size: 1rem;
+}
+.btn-delete-category:hover {
+    color: #c9302c;
+}
+.admin-product-category {
+    font-style: italic;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* --- Responsive para la nueva retícula --- */
+@media (max-width: 1200px) {
+    .admin-grid-layout {
+        /* Pasa a 2 columnas: Formulario y Lista (categorías abajo) */
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 
+            "form list"
+            "categories categories";
+    }
+    .admin-form-container { grid-area: form; }
+    .admin-products-list-wrapper { grid-area: list; }
+    .admin-categories-container { 
+        grid-area: categories; 
+        max-width: 600px;
+        margin: 0 auto; /* Centrarlo */
+    }
+}
+@media (max-width: 900px) {
+    .admin-grid-layout {
+        /* Pasa a 1 columna */
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "form"
+            "categories"
+            "list";
+    }
+    .admin-categories-container {
+        margin: 0;
+        max-width: none;
+        width: 100%;
+        position: static; /* Quitar sticky */
+        margin-bottom: 2rem;
+    }
+    .admin-products-list-wrapper {
+        margin-bottom: 2rem;
+    }
+}
+/* --- FIN DE ESTILOS AGREGADOS --- */
