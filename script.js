@@ -8,7 +8,7 @@ import { db, collection, getDocs, query, orderBy, where } from './firebase-init.
 // Debe incluir el código de país (ej: 521XXXXXXXXXX para México).
 // ¡SIN el símbolo '+' ni espacios ni guiones!
 //
-const WHATSAPP_NUMBER = "TU_NUMERO_AQUI_CON_CODIGO_DE_PAIS";
+const WHATSAPP_NUMBER = "5216641122626";
 //
 // ------------------------------------
 
