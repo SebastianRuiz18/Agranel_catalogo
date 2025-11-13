@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - A Granel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo-link">
+                <img src="img/agranellogo.png" alt="A Granel - Un gusto sin culpa">
+            </a>
+        </div>
+    </header>
+
+    <!-- Admin Panel -->
+    <section class="admin-panel">
+        <div class="container">
+            <div class="admin-header">
+                <h2>Panel de Administración</h2>
+                <a href="index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Volver al catálogo
+                </a>
+            </div>
+
+            <!-- Formulario para agregar/editar producto -->
+            <div class="admin-form-container">
+                <h3 id="formTitle">Agregar Nuevo Producto</h3>
+                <form id="productForm" class="product-form">
+                    <input type="hidden" id="productId">
+                    
+                    <div class="form-group">
+                        <label for="productName">Nombre del Producto *</label>
+                        <input type="text" id="productName" required placeholder="Ej: Cajita de Mixito">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productDescription">Descripción *</label>
+                        <textarea id="productDescription" required rows="3" placeholder="Describe el producto..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productPrice">Precio *</label>
+                        <input type="text" id="productPrice" required placeholder="Ej: $55.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productImage">URL de la Imagen *</label>
+                        <input type="url" id="productImage" required placeholder="https://...">
+                        <small>Puedes usar enlaces de Google Drive, Facebook, etc.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productWhatsapp">Mensaje de WhatsApp *</label>
+                        <input type="text" id="productWhatsapp" required placeholder="Ej: Hola! Me interesa la Cajita de Mixito">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save"></i> Guardar Producto
+                        </button>
+                        <button type="button" class="btn-cancel" onclick="cancelarEdicion()">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Lista de productos -->
+            <div class="admin-products">
+                <h3>Productos Existentes</h3>
+                <div id="adminProductsList" class="admin-products-list">
+                    <!-- Se cargan dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 A Granel. Panel de Administración</p>
+        </div>
+    </footer>
+
+    <script src="admin.js"></script>
+</body>
+</html>

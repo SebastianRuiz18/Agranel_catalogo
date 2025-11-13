@@ -8,8 +8,7 @@
 @font-face {
   font-family: 'Cormorant Garamond Italic';
   src: url('fonts/CormorantGaramond-Italic-VariableFont_wght.ttf') format('truetype-variations');
-  /* Como es variable, definimos el rango de peso que soporta */
-  font-weight: 300 700; /* (Este es un rango común, ajústalo si lo conoces) */
+  font-weight: 300 700;
   font-style: italic;
 }
 
@@ -20,13 +19,14 @@
   box-sizing: border-box;
 }
 
-/* === VARIABLES MINIMALISTAS === */
+/* === VARIABLES === */
 :root {
-  --primary: #222;   /* Color de acento oscuro */
-  --bg: #faf9f7;      /* Fondo crema muy sutil */
-  --text: #222;       /* Texto principal oscuro */
-  --text-light: #666; /* Texto secundario gris */
-  --border-light: #ebebeb; /* Separador muy suave */
+  --primary: #222;
+  --bg: #faf9f7;
+  --text: #222;
+  --text-light: #666;
+  --border-light: #ebebeb;
+  --accent: #d4a373;
 }
 
 /* === GLOBAL === */
@@ -48,44 +48,43 @@ body {
 /* === HEADER === */
 .header {
   text-align: center;
-  padding: 3rem 1rem 2rem;
-  /* Sin fondo, sin bordes. Se mezcla con la página. */
+  padding: 2rem 1rem 1.5rem;
 }
 
 .logo-link {
-  display: inline-block; /* Asegura que el enlace se comporte bien */
+  display: inline-block;
 }
 
 .logo-link img {
-  display: block; /* Evita espacios extra debajo de la imagen */
-  max-width: 100%; /* Asegura que la imagen sea responsiva */
-  height: auto; /* Mantiene la proporción de la imagen */
-  
-  /* Ajusta este valor al tamaño que quieras para tu logo */
-  max-height: 100px; 
+  display: block;
+  max-width: 100%;
+  height: auto;
+  max-height: 100px;
 }
 
 /* === HERO === */
 .hero {
   text-align: center;
-  padding: 4rem 1rem;
-  /* Eliminamos imagen, gradiente y color de fondo */
+  padding: 3rem 1rem;
   border-top: 1px solid var(--border-light);
   border-bottom: 1px solid var(--border-light);
 }
 
 .hero h2 {
-  font-family: 'Sloop ScriptOne', cursive; /* <-- APLICA LA FUENTE */
-  font-weight: normal; /* Las fuentes script se ven mejor sin "negrita" falsa */
-  font-size: 5rem;     /* <-- AUMENTAMOS EL TAMAÑO para que luzca */
+  font-family: 'Sloop ScriptOne', cursive;
+  font-weight: normal;
+  font-size: 4.5rem;
   margin-bottom: 1rem;
-  line-height: 1.2;    /* Ajusta el espaciado si la fuente es muy alta */
+  line-height: 1.2;
+  color: var(--text);
 }
 
 .hero p {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   color: var(--text-light);
-  font-family: 'Cormorant Garamond Italic', serif; /* <-- APLICA LA FUENTE */
+  font-family: 'Cormorant Garamond Italic', serif;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 /* === PRODUCTS === */
@@ -94,7 +93,7 @@ body {
 }
 
 .section-title {
-  font-family: 'Cormorant Garamond Italic', serif; /* <-- APLICA LA FUENTE */
+  font-family: 'Cormorant Garamond Italic', serif;
   text-align: center;
   color: var(--text);
   font-size: 2rem;
@@ -102,81 +101,84 @@ body {
   margin-bottom: 3rem;
 }
 
-.section-title::after {
-  display: none; /* Eliminamos la línea dorada decorativa */
-}
-
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 2.5rem 1.8rem; /* Más espacio vertical */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 3rem 2rem;
 }
 
 .product-card {
-  /* Eliminamos fondo, borde, radio y sombra */
-  text-align: center; /* Centramos todo para un look limpio */
+  text-align: center;
+  transition: transform 0.3s ease;
 }
 
 .product-card:hover {
-  transform: none; /* Sin efectos de hover */
+  transform: translateY(-5px);
 }
 
 .product-image {
   width: 100%;
-  height: 220px;
+  height: 280px;
   object-fit: cover;
-  border-radius: 12px; /* Redondeamos solo la imagen */
-}
-
-.product-info {
-  padding: 1rem 0;
-}
-
-.product-name {
-  font-family: 'Cormorant Garamond Italic', serif; /* <-- APLICA LA FUENTE */
-  font-weight: 800;  /* 400 es 'normal'. Puedes probar 300 para un look más fino */
-  color: var(--text);
-  font-size: 1.5rem; /* <-- AUMENTAMOS TAMAÑO para legibilidad */
-  margin-bottom: 0.3
-}
-
-.product-description {
-  font-family: 'Cormorant Garamond Italic', serif; /* <-- APLICA LA FUENTE */
-  font-style: italic; /* Aseguramos que se pida el estilo itálico */
-  font-weight: 400;  /* 400 es 'normal'. Puedes probar 300 para un look más fino */
-  color: var(--text-light);
-  font-size: 1.05rem; /* <-- AUMENTAMOS TAMAÑO para legibilidad */
+  border-radius: 12px;
   margin-bottom: 1rem;
 }
 
-.product-price {
+.product-info {
+  padding: 0.5rem 0;
+}
+
+.product-name {
+  font-family: 'Cormorant Garamond Italic', serif;
+  font-weight: 600;
+  color: var(--text);
   font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.product-description {
+  font-family: 'Cormorant Garamond Italic', serif;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--text-light);
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+
+.product-price {
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--primary); /* El precio es un buen lugar para el acento */
+  color: var(--accent);
   margin-bottom: 1rem;
 }
 
 .product-btn {
   display: inline-block;
   text-align: center;
-  background: none; /* SIN fondo */
-  color: var(--primary); /* Color de acento */
-  padding: 0.25rem 0;
+  background: none;
+  color: var(--primary);
+  padding: 0.5rem 0;
   border-radius: 0;
   text-decoration: none;
   font-weight: 600;
-  border-bottom: 2px solid transparent; /* Espacio para hover */
+  font-size: 0.95rem;
+  border-bottom: 2px solid transparent;
   transition: border-color 0.3s ease;
 }
 
 .product-btn:hover {
   background: none;
-  border-bottom-color: var(--primary); /* Subrayado elegante */
+  border-bottom-color: var(--primary);
+}
+
+.product-btn i {
+  margin-right: 0.3rem;
 }
 
 /* === CONTACT === */
 .contact {
-  /* Sin fondo */
   padding: 4rem 0;
   text-align: center;
   border-top: 1px solid var(--border-light);
@@ -184,32 +186,32 @@ body {
 
 .contact-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2.5rem;
+  margin-top: 2.5rem;
 }
 
 .contact-card {
-  /* Eliminamos fondo, borde, radio y padding */
-  padding: 1rem;
+  padding: 1.5rem;
 }
 
 .contact-card i {
-  font-size: 2.2rem;
-  color: var(--primary); /* Icono de acento */
+  font-size: 2.5rem;
+  color: var(--accent);
   margin-bottom: 1rem;
 }
 
 .contact-card h3 {
-    
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   color: var(--text);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
 }
 
 .contact-card p {
   color: var(--text-light);
-  font-size: 0.95rem;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .btn-link {
@@ -221,7 +223,7 @@ body {
   border-radius: 0;
   text-decoration: underline;
   text-underline-offset: 4px;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 500;
   transition: opacity 0.3s;
 }
@@ -235,26 +237,31 @@ body {
 .social {
   padding: 3rem 1rem;
   text-align: center;
-  /* Sin fondo */
   border-top: 1px solid var(--border-light);
-  font-family: 'Cormorant Garamond Italic', serif; /* <-- APLICA LA FUENTE */
+  font-family: 'Cormorant Garamond Italic', serif;
 }
 
 .social h3 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   margin-bottom: 1.5rem;
   font-weight: 500;
   color: var(--text);
 }
 
+.social-links {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
 .social-links a {
-  font-size: 1.4rem;
-  color: var(--text-light); /* Iconos suaves */
+  font-size: 1.8rem;
+  color: var(--text-light);
   transition: color 0.3s;
 }
 
 .social-links a:hover {
-  color: var(--primary); /* Acento en hover */
+  color: var(--accent);
 }
 
 /* === FOOTER === */
@@ -272,7 +279,233 @@ body {
 }
 
 .footer i {
-  color: var(--primary); /* Corazón de acento */
+  color: var(--accent);
+}
+
+/* ==========================================
+   ESTILOS ADMIN PANEL
+   ========================================== */
+
+.admin-panel {
+  padding: 3rem 0;
+  min-height: 80vh;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-header h2 {
+  font-family: 'Cormorant Garamond Italic', serif;
+  font-size: 2.5rem;
+  color: var(--text);
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  background-color: var(--text);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: opacity 0.3s;
+}
+
+.btn-back:hover {
+  opacity: 0.8;
+}
+
+.admin-form-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 3rem;
+  border: 1px solid var(--border-light);
+}
+
+.admin-form-container h3 {
+  font-family: 'Cormorant Garamond Italic', serif;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+}
+
+.product-form {
+  max-width: 700px;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.form-group small {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--text-light);
+  font-size: 0.85rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-submit,
+.btn-cancel {
+  padding: 0.8rem 1.8rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-submit {
+  background-color: var(--accent);
+  color: white;
+}
+
+.btn-submit:hover {
+  background-color: #c29563;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  color: var(--text-light);
+  border: 1px solid var(--border-light);
+}
+
+.btn-cancel:hover {
+  background-color: #f5f5f5;
+}
+
+.admin-products {
+  margin-top: 3rem;
+}
+
+.admin-products h3 {
+  font-family: 'Cormorant Garamond Italic', serif;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--text);
+}
+
+.admin-products-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.admin-product-item {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.admin-product-image {
+  width: 120px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.admin-product-info h4 {
+  font-size: 1.2rem;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+
+.admin-product-info p {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.admin-product-price {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.admin-product-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.btn-edit,
+.btn-delete {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.btn-edit {
+  background-color: var(--text);
+  color: white;
+}
+
+.btn-edit:hover {
+  opacity: 0.8;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
 }
 
 /* === RESPONSIVE === */
@@ -280,7 +513,81 @@ body {
   .hero h2 {
     font-size: 3rem;
   }
+
+  .hero p {
+    font-size: 1.1rem;
+  }
+
   .section-title {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2.5rem 1.5rem;
+  }
+
+  .product-image {
+    height: 240px;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-product-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .admin-product-image {
+    margin: 0 auto;
+  }
+
+  .admin-product-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-submit,
+  .btn-cancel {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h2 {
+    font-size: 2.5rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .logo-link img {
+    max-height: 80px;
+  }
+
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .social-links {
+    gap: 1.2rem;
+  }
+
+  .social-links a {
+    font-size: 1.5rem;
   }
 }
