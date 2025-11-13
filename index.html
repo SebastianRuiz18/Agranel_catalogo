@@ -23,34 +23,59 @@
         </nav>
     </header>
 
-    <main class="catalog-container">
-        
-        <!-- === ¡NUEVA SECCIÓN! === -->
-        <section id="featured-section" class="featured-section" style="display: none;">
-            <h2>Recomendados</h2>
-            <div class="products-grid featured-grid" id="featured-products-list">
-                <!-- Los productos destacados se cargarán aquí -->
-            </div>
-            <hr class="section-divider">
-        </section>
-        
-
+    <!-- Hero Section -->
+    <section class="hero-section">
         <h1>Nuestros Productos</h1>
         <p class="subtitle">Descubre la frescura y calidad que A granel tiene para ti.</p>
-        
+    </section>
+
+    <!-- Sección de Recomendados -->
+    <section id="featured-section" class="featured-section" style="display: none;">
+        <h2>Recomendados</h2>
+        <div class="products-grid" id="featured-products-list">
+            <!-- Los productos destacados se cargarán aquí -->
+        </div>
+    </section>
+
+    <main class="catalog-container">
         <!-- NAVEGACIÓN DE CATEGORÍAS -->
         <div id="category-filters" class="category-filters">
             <!-- Los filtros se cargarán aquí -->
         </div>
 
         <div class="products-grid" id="products-list">
-            <!-- Los productos se cargarán aquí -->
             <p class="loader">Cargando productos...</p>
         </div>
     </main>
 
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2026 A granel. Todos los derechos reservados.</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <a href="https://wa.me/526641234567" class="contact-link" target="_blank">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>WhatsApp</span>
+                </a>
+            </div>
+
+            <div class="footer-section">
+                <a href="https://www.instagram.com/agranel.tj" class="contact-link" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                    <span>@agranel.tj</span>
+                </a>
+            </div>
+
+            <div class="footer-section">
+                <a href="https://goo.gl/maps/example" class="contact-link" target="_blank">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Tijuana, BC</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 A granel</p>
+        </div>
     </footer>
 
     <script src="script.js" type="module"></script>
