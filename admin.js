@@ -8,7 +8,7 @@ import {
 // --- ATENCIÓN ---
 // Pon aquí el email de la persona que podrá administrar
 // Puedes agregar más separándolos con comas
-const ADMIN_EMAIL = "email-de-tu-cliente@gmail.com";
+const ADMIN_EMAIL = "seruci93@gmail.com";
 // ----------------
 
 // Variables globales
