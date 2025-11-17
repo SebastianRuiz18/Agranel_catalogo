@@ -8,7 +8,7 @@ import {
 
 // --- ATENCIÓN ---
 // Email autorizado para administrar.
-const ADMIN_EMAIL = "seruci93@gmail.com";
+const ADMIN_EMAIL = "agraneltj@gmail.com";
 // ----------------
 
 // Variables globales
