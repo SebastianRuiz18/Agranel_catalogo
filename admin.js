@@ -95,16 +95,26 @@ async function cargarYMostrarCategorias() {
         if (snapshot.empty) {
             categoryList.innerHTML = '<p>No hay categorías.</p>';
         }
-        snapshot.forEach(doc => {
-            const categoria = doc.data();
-            const categoriaId = doc.id;
+        snapshot.forEach(docSnap => {
+            const categoria = docSnap.data();
+            const categoriaId = docSnap.id;
+            const estaOculta = categoria.oculta || false;
+            
             categoriasCache.set(categoriaId, categoria.nombre);
             
             const item = document.createElement('div');
-            item.className = 'category-list-item';
+            // Añadimos clase 'category-hidden' si está oculta para que se vea gris en admin
+            item.className = `category-list-item ${estaOculta ? 'category-hidden' : ''}`;
             item.id = `cat-item-${categoriaId}`;
+            
+            // Icono del ojo cambia según estado
+            const eyeIcon = estaOculta ? 'fa-eye-slash' : 'fa-eye';
+
             item.innerHTML = `
                 <input type="text" value="${categoria.nombre}" class="category-input" data-id="${categoriaId}" disabled>
+                <button class="btn-hide-category" data-id="${categoriaId}" data-status="${estaOculta}" title="Ocultar/Mostrar">
+                    <i class="fas ${eyeIcon}"></i>
+                </button>
                 <button class="btn-edit-category" data-id="${categoriaId}" title="Editar"><i class="fas fa-edit"></i></button>
                 <button class="btn-save-category" data-id="${categoriaId}" title="Guardar" style="display: none;"><i class="fas fa-save"></i></button>
                 <button class="btn-delete-category" data-id="${categoriaId}" data-nombre="${categoria.nombre}" title="Eliminar"><i class="fas fa-trash"></i></button>
@@ -117,6 +127,10 @@ async function cargarYMostrarCategorias() {
             productCategorySelect.appendChild(option);
         });
 
+        // Event listeners (Añadimos el del ojito)
+        categoryList.querySelectorAll('.btn-hide-category').forEach(btn => {
+            btn.addEventListener('click', () => toggleOcultarCategoria(btn.dataset.id, btn.dataset.status === 'true'));
+        });
         categoryList.querySelectorAll('.btn-edit-category').forEach(btn => {
             btn.addEventListener('click', () => habilitarEdicionCategoria(btn.dataset.id));
         });
@@ -133,6 +147,20 @@ async function cargarYMostrarCategorias() {
     } catch (error) {
         console.error("Error al cargar categorías:", error);
         mostrarMensaje('Error al cargar categorías', 'error');
+    }
+}
+
+// NUEVA FUNCIÓN: Copia y pega debajo de la anterior
+async function toggleOcultarCategoria(id, estadoActual) {
+    try {
+        const docRef = doc(db, 'categorias', id);
+        // Cambia el valor de 'oculta' al contrario del que tiene
+        await setDoc(docRef, { oculta: !estadoActual }, { merge: true });
+        mostrarMensaje(!estadoActual ? 'Categoría oculta' : 'Categoría visible', 'info');
+        cargarYMostrarCategorias(); // Recarga la lista para ver cambios
+    } catch (error) {
+        console.error("Error al ocultar:", error);
+        mostrarMensaje('Error al cambiar visibilidad', 'error');
     }
 }
 

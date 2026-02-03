@@ -1014,6 +1014,37 @@ input:checked + .slider:before {
         border-radius: 6px;
     }
 
+    /* Estilos para los iconos en el Navbar */
+.main-nav i {
+    font-size: 1.2rem;
+    vertical-align: middle;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.main-nav a:hover i {
+    color: var(--accent-color);
+}
+
+/* Ocultar el texto en Desktop para que solo se vean los iconos */
+.nav-text-mobile {
+    display: none;
+}
+
+/* En móvil, mostrar icono + texto para que sea más fácil de picar */
+@media (max-width: 768px) {
+    .nav-text-mobile {
+        display: inline;
+        margin-left: 8px;
+    }
+    
+    .main-nav.active a {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+}
+
     /* Contenido público */
     .hero-section h1 {
         font-size: 3rem;
@@ -1179,6 +1210,26 @@ input:checked + .slider:before {
     .admin-categories-container h3 {
         font-size: 1.5rem;
     }
+}
+.category-hidden {
+    opacity: 0.5;
+    background-color: #f0f0f0 !important;
+}
+
+.btn-hide-category {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.25rem;
+    color: var(--primary-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-hide-category:hover {
+    color: var(--accent-color);
 }
 
 /* --- Extra pequeño --- */

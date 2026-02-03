@@ -49,11 +49,9 @@ async function cargarCategoriasYFiltros() {
         const q = query(collection(db, 'categorias'), orderBy('nombre'));
         const snapshot = await getDocs(q);
         
-        // Limpiar cache y filtros
         categoriasCache.clear();
         filtersContainer.innerHTML = '';
         
-        // Botón "Todos" por defecto
         const btnTodos = document.createElement('button');
         btnTodos.className = 'filter-button active';
         btnTodos.textContent = 'Todos';
@@ -63,22 +61,27 @@ async function cargarCategoriasYFiltros() {
         };
         filtersContainer.appendChild(btnTodos);
 
-        // Crear un botón por cada categoría
         snapshot.forEach(doc => {
             const categoria = doc.data();
             const categoriaId = doc.id;
             
-            // Llenar cache
-            categoriasCache.set(categoriaId, categoria.nombre);
+            // Guardamos el nombre Y si está oculta en el cache
+            categoriasCache.set(categoriaId, { 
+                nombre: categoria.nombre, 
+                oculta: categoria.oculta || false 
+            });
             
-            const btn = document.createElement('button');
-            btn.className = 'filter-button';
-            btn.textContent = categoria.nombre;
-            btn.onclick = () => {
-                cargarProductosDelCatalogo(categoriaId);
-                setActiveFilter(btn);
-            };
-            filtersContainer.appendChild(btn);
+            // SOLO crear el botón si NO está oculta
+            if (!categoria.oculta) {
+                const btn = document.createElement('button');
+                btn.className = 'filter-button';
+                btn.textContent = categoria.nombre;
+                btn.onclick = () => {
+                    cargarProductosDelCatalogo(categoriaId);
+                    setActiveFilter(btn);
+                };
+                filtersContainer.appendChild(btn);
+            }
         });
 
     } catch (error) {
@@ -139,40 +142,36 @@ async function cargarProductosDelCatalogo(filtroCategoriaId) {
     try {
         let q;
         if (filtroCategoriaId) {
-            // Filtrar por categoría
-            q = query(collection(db, 'productos'), 
-                      where("categoriaId", "==", filtroCategoriaId), 
-                      orderBy('nombre'));
+            q = query(collection(db, 'productos'), where("categoriaId", "==", filtroCategoriaId), orderBy('nombre'));
         } else {
-            // "Todos": Trae todos, ordenados por nombre
-            q = query(collection(db, 'productos'), 
-                      orderBy('nombre'));
+            q = query(collection(db, 'productos'), orderBy('nombre'));
         }
 
         const snapshot = await getDocs(q);
-        
-        listaProductos.innerHTML = ''; // Limpiar "Cargando..."
+        listaProductos.innerHTML = '';
 
         if (snapshot.empty) {
-            listaProductos.innerHTML = '<p class="loader">No hay productos en esta categoría.</p>';
+            listaProductos.innerHTML = '<p class="loader">No hay productos.</p>';
             return;
         }
 
         snapshot.forEach(doc => {
             const producto = doc.data();
             producto.id = doc.id;
-            const productCard = createProductCard(producto); // Reutilizar la función
+            
+            // Lógica para sección "Todos": Si la categoría está oculta, no mostramos el producto
+            const infoCat = categoriasCache.get(producto.categoriaId);
+            if (!filtroCategoriaId && infoCat && infoCat.oculta) {
+                return; // Se salta este producto
+            }
+
+            const productCard = createProductCard(producto);
             listaProductos.appendChild(productCard);
         });
 
     } catch (error) {
-        console.error("Error cargando productos del catálogo:", error);
-        // Este es el error que probablemente ves por el índice de categorías:
-        if (error.code === 'failed-precondition') {
-            listaProductos.innerHTML = '<p class="loader">Error: La base de datos necesita un índice para "Categorías". Abre F12 y sigue las instrucciones del error en la consola.</p>';
-        } else {
-            listaProductos.innerHTML = '<p class="loader">No se pudieron cargar los productos. Intenta de nuevo más tarde.</p>';
-        }
+        console.error("Error cargando productos:", error);
+        listaProductos.innerHTML = '<p class="loader">Error al cargar productos.</p>';
     }
 }
 

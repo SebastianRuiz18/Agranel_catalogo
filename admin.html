@@ -127,19 +127,14 @@
 
                 <!-- Columna 3: Administrar Categorías -->
                 <div class="admin-categories-container">
-                    <h3>Administrar Categorías</h3>
+                    <h3>Categorías</h3>
                     <form id="categoryForm" class="category-form">
-                        <label for="categoryName">Nueva Categoría</label>
                         <div class="form-group-inline">
-                            <input type="text" id="categoryName" placeholder="Ej: Navidad" required>
-                            <button type="submit" class="btn-add-category">
-                                <i class="fas fa-plus"></i>
-                            </button>
+                            <input type="text" id="categoryName" placeholder="Nueva categoría..." required>
+                            <button type="submit" class="btn-add-category"><i class="fas fa-plus"></i></button>
                         </div>
                     </form>
-                    <div id="categoryList" class="category-list">
-                        <!-- Lista de categorías (AHORA EDITABLE) se cargará aquí -->
-                    </div>
+                    <div id="categoryList" class="category-list"></div> 
                 </div>
 
             </div> <!-- Fin de .admin-grid-layout -->
